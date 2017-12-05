@@ -114,26 +114,26 @@ namespace BearingPlugin
         private static void DrawInnerRim(ksDocument2D innerRimDoc, double BearingWidth, 
            double InnerRimRad, double InnerRimWidth,double GutterDepth, double BallRad)
         {
-             float cutRad = (float)(Math.Sqrt(Math.Pow(BallRad, 2) - Math.Pow(BallRad - GutterDepth, 2)));
+            /* float cutRad = (float)(Math.Sqrt(Math.Pow(BallRad, 2) - Math.Pow(BallRad - GutterDepth, 2)));
              innerRimDoc.ksLineSeg(-BearingWidth/2,InnerRimRad-InnerRimWidth, BearingWidth / 2, InnerRimRad - InnerRimWidth, 1);
              innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad - InnerRimWidth, -BearingWidth / 2, InnerRimRad, 1);
              innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad - InnerRimWidth, BearingWidth / 2, InnerRimRad, 1);
              innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad, -(BearingWidth /2) + cutRad, InnerRimRad, 1);
              innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad, (BearingWidth / 2) - cutRad, InnerRimRad, 1);
              innerRimDoc.ksArcBy3Points(-(BearingWidth / 2) + cutRad, InnerRimRad, 0, InnerRimRad - GutterDepth, (BearingWidth / 2) - cutRad, InnerRimRad, 1);
-             innerRimDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);
+             innerRimDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);*/
             
         }
         private static void DrawOuterRim(ksDocument2D innerRimDoc, double BearingWidth, double InnerRimRad, double InnerRimWidth, double GutterDepth, double BallRad)
         {
-            float cutRad = (float)(Math.Sqrt(Math.Pow(BallRad, 2) - Math.Pow(BallRad - GutterDepth, 2)));
+            /*float cutRad = (float)(Math.Sqrt(Math.Pow(BallRad, 2) - Math.Pow(BallRad - GutterDepth, 2)));
             innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, 1);
             innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, -BearingWidth / 2, InnerRimRad + BallRad, 1);
             innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, BearingWidth / 2, InnerRimRad + BallRad, 1);
             innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + BallRad, -(BearingWidth / 2) + cutRad, InnerRimRad + BallRad, 1);
             innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad + BallRad, (BearingWidth / 2) - cutRad, InnerRimRad + BallRad, 1);
             innerRimDoc.ksArcBy3Points(-(BearingWidth / 2) + cutRad, InnerRimRad + BallRad, 0, InnerRimRad + BallRad + GutterDepth, (BearingWidth / 2) - cutRad, InnerRimRad + BallRad, 1);
-            innerRimDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);*/
         }
         private static void DrawBalls(ksDocument2D doc2d,double BearingWidth, double InnerRimRad, double InnerRimWidth, double GutterDepth, double BallRad)
         {
