@@ -37,26 +37,24 @@ namespace BearingPlugin
             if (_kompas == null) throw new Exception("Нет связи с Kompas3D.");
 
         }
-        public void BuildBearing(BearingParametrs bear)
+        public void BuildBearing(BearingParametrs bearing)
         {
             if (_kompas == null) throw new Exception("Не возможно построить деталь. Нет связи с Kompas3D.");
 
             ksDocument3D doc = _kompas.Document3D();
             doc.Create();
-            ksPart topStoolPart = doc.GetPart((short)Kompas6Constants3D.Part_Type.pTop_Part); //указатель на деталь
-            ksEntity planeXoy = topStoolPart.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOY); //определим плоскость XY
-            //---
-            ksEntity planeXOZ = topStoolPart.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOZ);
-            ksEntity planeYOZ = topStoolPart.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOY);
-            //---
-            ksEntity sketch = topStoolPart.NewEntity((short)Kompas6Constants3D.Obj3dType.o3d_sketch); //создаем переменную эскиза
-            ksSketchDefinition sd = sketch.GetDefinition(); //получим указатель на параметры эскиза
-            sd.SetPlane(planeXoy); //зададим плоскость на которой создаем эскиз
-            sketch.Create(); // создаем эскиз
-            ksDocument2D doc2d = sd.BeginEdit(); //входим в режим редактирование эскиза
-            DrawInnerRim(doc2d);
-            DrawOuterRim(doc2d);
-            sd.EndEdit(); //закончили редактировать эскиз
+
+            //указатель на деталь
+            ksPart innerRim = doc.GetPart((short)Kompas6Constants3D.Part_Type.pTop_Part); 
+            ksEntity planeXOY = innerRim.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOY); //определим плоскость XY
+            ksEntity innerRimSketch = innerRim.NewEntity((short)Kompas6Constants3D.Obj3dType.o3d_sketch); //создаем переменную эскиза
+            ksSketchDefinition innerRimSketchDef = innerRimSketch.GetDefinition(); //получим указатель на параметры эскиза
+            innerRimSketchDef.SetPlane(planeXOY); //зададим плоскость на которой создаем эскиз
+            innerRimSketch.Create(); // создаем эскиз
+            ksDocument2D innerRimDoc = innerRimSketchDef.BeginEdit(); //входим в режим редактирование эскиза
+            DrawInnerRim(innerRimDoc, bearing._bearingWidth, bearing._innerRimRad,bearing._innerRimWidth,bearing._gutterDepth, bearing._ballRad);
+            DrawOuterRim(innerRimDoc, bearing._bearingWidth, bearing._innerRimRad, bearing._innerRimWidth, bearing._gutterDepth, bearing._ballRad);
+            innerRimSketchDef.EndEdit(); //закончили редактировать эскиз
             //-------------------------------------
             ksPart topStoolPart1 = doc.GetPart((short)Kompas6Constants3D.Part_Type.pTop_Part); //указатель на деталь
             ksEntity planeXoy1 = topStoolPart1.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOY); //определим плоскость XY
@@ -65,16 +63,20 @@ namespace BearingPlugin
             sd1.SetPlane(planeXoy1); //зададим плоскость на которой создаем эскиз
             sketch1.Create(); // создаем эскиз
             ksDocument2D doc2d1 = sd1.BeginEdit(); //входим в режим редактирование эскиза
-            DrawBalls(doc2d1);
+            DrawBalls(doc2d1, bearing._bearingWidth, bearing._innerRimRad, bearing._innerRimWidth, bearing._gutterDepth, bearing._ballRad);
             sd1.EndEdit(); //закончили редактировать эскиз
 
+            
+            ksEntity planeXOZ = topStoolPart1.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOZ);
+            ksEntity planeYOZ = topStoolPart1.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOY);
+            
 
-            ExtrudeRim(bear, topStoolPart, sketch, (short)Direction_Type.dtNormal);
-            Extrude(bear, topStoolPart, sketch1, (short)Direction_Type.dtNormal, planeXOZ, planeYOZ);
+            //BossRotatedExtrusion(innerRim, innerRimSketch, (short)Direction_Type.dtNormal);
+            //Extrude(topStoolPart1, sketch1, (short)Direction_Type.dtNormal, planeXOZ, planeYOZ);
 
             ksEntity mas = topStoolPart1.NewEntity((short)Obj3dType.o3d_circularCopy);
         }
-        private static void Extrude(BearingParametrs bearing, ksPart part, ksEntity sketch, short type, ksEntity planeXOZ, ksEntity planeYOZ)
+        private static void Extrude(ksPart part, ksEntity sketch, short type, ksEntity planeXOZ, ksEntity planeYOZ)
         {
             ksEntity rotate = part.NewEntity((short)Obj3dType.o3d_bossRotated);
             ksBossRotatedDefinition rotDef = rotate.GetDefinition();
@@ -99,42 +101,44 @@ namespace BearingPlugin
             circcoll.Add(rotate);
             circrotate.Create();
         }
-        private static void ExtrudeRim(BearingParametrs bearing, ksPart part, ksEntity sketch, short type)
+        private static void BossRotatedExtrusion(ksPart part, ksEntity sketch, short type)
         {
-            ksEntity rotate = part.NewEntity((short)Obj3dType.o3d_bossRotated);
-            ksBossRotatedDefinition rotDef = rotate.GetDefinition();
-            rotDef.directionType = type;
-            rotDef.SetSketch(sketch);
-            rotDef.SetSideParam(true, 360);
-            ksRotatedParam rotateParam = rotDef.RotatedParam();
-            rotate.Create();
+            ksEntity bossRotated = part.NewEntity((short)Obj3dType.o3d_bossRotated);
+            ksBossRotatedDefinition bossRotatedDef = bossRotated.GetDefinition();
+            bossRotatedDef.directionType = type;
+            bossRotatedDef.SetSketch(sketch);
+            bossRotatedDef.SetSideParam(true, 360);
+            ksRotatedParam rotateParam = bossRotatedDef.RotatedParam();
+            bossRotated.Create();
         }
-            private static void DrawInnerRim(ksDocument2D doc2d)
+        private static void DrawInnerRim(ksDocument2D innerRimDoc, double BearingWidth, 
+           double InnerRimRad, double InnerRimWidth,double GutterDepth, double BallRad)
         {
-             doc2d.ksLineSeg(-2, 1, 2, 1, 1);
-             doc2d.ksLineSeg(-2, 1, -2, 3, 1);
-             doc2d.ksLineSeg(2, 3, 2, 1, 1);
-             doc2d.ksLineSeg(-2, 3, -1, 3, 1);
-             doc2d.ksLineSeg(2, 3, 1, 3, 1);
-             doc2d.ksArcBy3Points(-1, 3, 0, 2.5, 1, 3, 1);
-             doc2d.ksLineSeg(-2, 0, 2, 0, 3);
+             float cutRad = (float)(Math.Sqrt(Math.Pow(BallRad, 2) - Math.Pow(BallRad - GutterDepth, 2)));
+             innerRimDoc.ksLineSeg(-BearingWidth/2,InnerRimRad-InnerRimWidth, BearingWidth / 2, InnerRimRad - InnerRimWidth, 1);
+             innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad - InnerRimWidth, -BearingWidth / 2, InnerRimRad, 1);
+             innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad - InnerRimWidth, BearingWidth / 2, InnerRimRad, 1);
+             innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad, -(BearingWidth /2) + cutRad, InnerRimRad, 1);
+             innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad, (BearingWidth / 2) - cutRad, InnerRimRad, 1);
+             innerRimDoc.ksArcBy3Points(-(BearingWidth / 2) + cutRad, InnerRimRad, 0, InnerRimRad - GutterDepth, (BearingWidth / 2) - cutRad, InnerRimRad, 1);
+             innerRimDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);
+            
         }
-        private static void DrawOuterRim(ksDocument2D doc2d)
+        private static void DrawOuterRim(ksDocument2D innerRimDoc, double BearingWidth, double InnerRimRad, double InnerRimWidth, double GutterDepth, double BallRad)
         {
-            doc2d.ksLineSeg(-2, 6, 2, 6, 1);
-            doc2d.ksLineSeg(-2, 4, -2, 6, 1);
-            doc2d.ksLineSeg(2, 6, 2, 4, 1);
-            doc2d.ksLineSeg(-2, 4, -1, 4, 1);
-            doc2d.ksLineSeg(2, 4, 1, 4, 1);
-            doc2d.ksArcBy3Points(-1, 4, 0, 4.5, 1, 4, 1);
-            doc2d.ksLineSeg(-2, 0, 2, 0, 3);
+            float cutRad = (float)(Math.Sqrt(Math.Pow(BallRad, 2) - Math.Pow(BallRad - GutterDepth, 2)));
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, 1);
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, -BearingWidth / 2, InnerRimRad + BallRad, 1);
+            innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, BearingWidth / 2, InnerRimRad + BallRad, 1);
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + BallRad, -(BearingWidth / 2) + cutRad, InnerRimRad + BallRad, 1);
+            innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad + BallRad, (BearingWidth / 2) - cutRad, InnerRimRad + BallRad, 1);
+            innerRimDoc.ksArcBy3Points(-(BearingWidth / 2) + cutRad, InnerRimRad + BallRad, 0, InnerRimRad + BallRad + GutterDepth, (BearingWidth / 2) - cutRad, InnerRimRad + BallRad, 1);
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);
         }
-        private static void DrawBalls(ksDocument2D doc2d)
+        private static void DrawBalls(ksDocument2D doc2d,double BearingWidth, double InnerRimRad, double InnerRimWidth, double GutterDepth, double BallRad)
         {
-            doc2d.ksArcByAngle(0, 3.5, 1, -90, 90, 1, 1);
-            doc2d.ksLineSeg(0, 4.5, 0, 2.5, 3);
-
-
+            doc2d.ksArcByAngle(0, InnerRimRad-GutterDepth+BallRad, BallRad, -90, 90, 1, 1);
+            doc2d.ksLineSeg(0, InnerRimRad - GutterDepth, 0, InnerRimRad - GutterDepth + 2 * BallRad, 3);
         }
     }
 }

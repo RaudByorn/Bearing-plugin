@@ -1,16 +1,15 @@
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\bin\Debug\BearingPlugin.exe.config
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\bin\Debug\BearingPlugin.exe
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\bin\Debug\BearingPlugin.pdb
-c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\bin\Debug\KAPITypes.dll
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.csprojResolveAssemblyReference.cache
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\Interop.Kompas6API5.dll
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\Interop.Kompas6Constants.dll
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\Interop.Kompas6Constants3D.dll
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\Interop.KompasAPI7.dll
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.csproj.ResolveComReference.cache
-c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.Form1.resources
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.Properties.Resources.resources
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.csproj.GenerateResource.Cache
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.csproj.CoreCompileInputs.cache
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.exe
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.pdb
+C:\Users\Nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.MainForm.resources
