@@ -13,21 +13,13 @@ namespace BearingPlugin
         /// </summary>
         public double _bearingWidth;
         /// <summary>
-        /// Радиус внутреннего обода
+        /// Диаметр внутреннего обода
         /// </summary>
-        public double _innerRimRad;
+        public double _innerRimDiam;
         /// <summary>
-        /// Ширина внутреннего обода
+        /// Диаметр внешнего обода
         /// </summary>
-        public double _innerRimWidth;
-        /// <summary>
-        /// Глубина желоба
-        /// </summary>
-        public double _gutterDepth;
-        /// <summary>
-        /// Радиус шариков
-        /// </summary>
-        public double _ballRad;
+        public double _outerRimDiam;
 
         /// <summary>
         /// Геттер и сеттер на ирину подшипника
@@ -44,66 +36,38 @@ namespace BearingPlugin
         /// <summary>
         /// Геттер и сеттер на радиус внутреннего обода
         /// </summary>
-        private double InnerRimRad
+        private double InnerRimDiam
         {
-            get => _innerRimRad;
+            get => _innerRimDiam;
             set
             {
-                _innerRimRad = value;
+                _innerRimDiam = value;
             }
         }
 
         /// <summary>
         /// Геттер и сеттер на ширину внутреннего обода
         /// </summary>
-        private double InnerRimWidth
+        private double OuterRimDiam
         {
-            get => _innerRimWidth;
+            get => _outerRimDiam;
             set
             {
-                _innerRimWidth = value;
+                _outerRimDiam = value;
             }
         }
 
         /// <summary>
-        /// Геттер и сеттер на глубину желоба
-        /// </summary>
-        private double GutterDepth
-        {
-            get => _gutterDepth;
-            set
-            {
-                _gutterDepth = value;
-            }
-        }
-
-        /// <summary>
-        /// Геттер и сеттер на радиус шарика
-        /// </summary>
-        private double BallRad
-        {
-            get => _ballRad;
-            set
-            {
-                _ballRad = value;
-            }
-        }
-
-        /// <summary>
-        /// Присваиваем переменные
+        /// Присваиваем значения
         /// </summary>
         /// <param name="bearingWidth"></param>
-        /// <param name="innerRimRad"></param>
-        /// <param name="innerRimWidth"></param>
-        /// <param name="gutterDepth"></param>
-        /// <param name="ballRad"></param>
-        public BearingParametrs(double bearingWidth, double innerRimRad, double innerRimWidth, double gutterDepth, double ballRad)
+        /// <param name="innerRimDiam"></param>
+        /// <param name="outerRimDiam"></param>
+        public BearingParametrs(double bearingWidth, double innerRimDiam, double outerRimDiam)
         {
                 BearingWidth = bearingWidth;
-                InnerRimRad = innerRimRad;
-                InnerRimWidth = innerRimWidth;
-                GutterDepth = gutterDepth;
-                BallRad = ballRad;
+                InnerRimDiam = innerRimDiam;
+                OuterRimDiam = outerRimDiam;
         }
     }
 }
