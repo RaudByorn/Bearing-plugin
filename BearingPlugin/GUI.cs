@@ -47,11 +47,11 @@ namespace BearingPlugin
 
         private void TestModParam_Click(object sender, EventArgs e)
         {
-            bearingWidthBox.Text = "4";
+            /*bearingWidthBox.Text = "4";
             innerRimRadBox.Text = "5";
             innerRimWidthBox.Text = "3";
             gutterDepthBox.Text = "0,5";
-            ballRadBox.Text = "1";
+            ballRadBox.Text = "1";*/
         }
 
         private void bearingWidthBox_KeyPress(object sender, KeyPressEventArgs e)
