@@ -152,7 +152,7 @@ namespace BearingPlugin
         {
             float ballDiam = (float)BearingWidth / 2;
             float gutterDepth = Math.Abs((float)((ballDiam - (OuterRimDiam - InnerRimDiam) / 2) / 2));
-
+            //Эскиз шариков
             doc2d.ksArcByAngle(0, (OuterRimDiam - InnerRimDiam) / 4 - gutterDepth + InnerRimDiam / 2 + ballDiam/2, ballDiam/2, -90, 90, 1, 1);
             doc2d.ksLineSeg(0, (OuterRimDiam - InnerRimDiam) / 4 - gutterDepth + InnerRimDiam / 2, 0, (OuterRimDiam - InnerRimDiam) / 4 - gutterDepth + InnerRimDiam / 2 + ballDiam, 3);
         }
