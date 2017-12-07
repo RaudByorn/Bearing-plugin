@@ -95,7 +95,7 @@ namespace BearingPlugin
             ksEntity circrotate = part.NewEntity((short)Obj3dType.o3d_circularCopy);
             ksCircularCopyDefinition cpyRotDef = circrotate.GetDefinition();
             cpyRotDef.SetAxis(axis);
-            cpyRotDef.SetCopyParamAlongDir(6, 45, false, false);
+            cpyRotDef.SetCopyParamAlongDir(8, 45, false, false);
             EntityCollection circcoll = (cpyRotDef.GetOperationArray());
             circcoll.Clear();
             circcoll.Add(rotate);

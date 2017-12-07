@@ -9,23 +9,41 @@ namespace BearingPluginTests
     public class BearingPluginTest
     {
         [Test]
-        [TestCase(4, 5, 3, 1, 1, TestName = "positive")]
+        [TestCase(3, 3, 8, TestName = "[+] TestBearingRightProp 1")]
+        [TestCase(7, 15, 28, TestName = "[+] TestBearingRightProp 2")]
+        [TestCase(16, 75, 105, TestName = "[+] TestBearingRightProp 3")]
 
-        public void PositiveParams(double bearingWidth, double innerRimRad, double innerRimWidth, double gutterDepth, double ballRad)
+        public void TestBearingParamsRightProp(double bearingWidth, double innerRimDiam, double outerRimDiam)
         {
-            
-            var unused = new BearingParametrs(bearingWidth, innerRimRad, innerRimWidth, gutterDepth, ballRad);
+            var unused = new BearingParametrs(bearingWidth, innerRimDiam, outerRimDiam);
         }
 
         [Test]
-        [TestCase(-5, 5, 3, 1, 1, TestName = "negative")]
+        [TestCase(-3, 3, 8, TestName = "[-] TestBearingNegativeParams 1")]
+        [TestCase(7, -15, 28, TestName = "[-] TestBearingNegativeParams 2")]
+        [TestCase(16, 75, -105, TestName = "[-] TestBearingNegativeParams 3")]
 
-        public void NegativeParams(double bearingWidth, double innerRimRad, double innerRimWidth, double gutterDepth, double ballRad)
+        public void TestBearingNegativeParams(double bearingWidth, double innerRimDiam, double outerRimDiam)
         {
             NUnit.Framework.Assert.That(() =>
             {
-                new BearingParametrs(bearingWidth, innerRimRad, innerRimWidth, gutterDepth, ballRad);
+                new BearingParametrs(bearingWidth, innerRimDiam, outerRimDiam);
             }, Throws.TypeOf(typeof(ArgumentException)));
         }
+
+        [Test]
+        [TestCase(3, 3, 3, TestName = "[-] TestBearingRightProp 1 | inner = outer")]
+        [TestCase(7, 28, 15, TestName = "[-] TestBearingRightProp 2 | inner > outer")]
+        [TestCase(16, 101, 105, TestName = "[-] TestBearingRightProp 3 | inner - outer < 5")]
+
+        public void TestBearingParamsWrongProp(double bearingWidth, double innerRimDiam, double outerRimDiam)
+        {
+            NUnit.Framework.Assert.That(() =>
+            {
+                new BearingParametrs(bearingWidth, innerRimDiam, outerRimDiam);
+            }, Throws.TypeOf(typeof(ArgumentException)));
+        }
+
+
     }
 }

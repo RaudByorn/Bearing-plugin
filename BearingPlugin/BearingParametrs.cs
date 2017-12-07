@@ -29,7 +29,10 @@ namespace BearingPlugin
             get => _bearingWidth;
             set
             {
-                _bearingWidth = value;
+                if (value < 3 || value > 16)
+                    throw new ArgumentException("Ширина подшипника не должна быть меньше 3 и превышать 16!");
+                else
+                    _bearingWidth = value;
             }
         }
 
@@ -41,7 +44,10 @@ namespace BearingPlugin
             get => _innerRimDiam;
             set
             {
-                _innerRimDiam = value;
+                if (value < 3 || value > 75)
+                    throw new ArgumentException("Диаметр внутреннего кольца не должен быть меньше 3 и превышать 75!");
+                else
+                    _innerRimDiam = value;
             }
         }
 
@@ -53,7 +59,10 @@ namespace BearingPlugin
             get => _outerRimDiam;
             set
             {
-                _outerRimDiam = value;
+                if (value < 3 || value > 105)
+                    throw new ArgumentException("Диаметр внешнего кольца не должен быть меньше 3 и превышать 105!");
+                else
+                    _outerRimDiam = value;
             }
         }
 
@@ -65,9 +74,17 @@ namespace BearingPlugin
         /// <param name="outerRimDiam"></param>
         public BearingParametrs(double bearingWidth, double innerRimDiam, double outerRimDiam)
         {
+            if (innerRimDiam > outerRimDiam || innerRimDiam == outerRimDiam || outerRimDiam-innerRimDiam < 5)
+            {
+                throw new ArgumentException("Заданы не верные пропорции!");
+            }
+            else
+            {
                 BearingWidth = bearingWidth;
                 InnerRimDiam = innerRimDiam;
                 OuterRimDiam = outerRimDiam;
+            }
+        
         }
     }
 }
