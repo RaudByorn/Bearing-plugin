@@ -53,7 +53,7 @@ namespace BearingPlugin
             innerRimSketch.Create(); // создаем эскиз
             ksDocument2D innerRimDoc = innerRimSketchDef.BeginEdit(); //входим в режим редактирование эскиза
             DrawInnerRim(innerRimDoc, bearing._bearingWidth, bearing._innerRimDiam, bearing._outerRimDiam);
-            //DrawOuterRim(innerRimDoc, bearing._bearingWidth, bearing._innerRimRad, bearing._innerRimWidth, bearing._gutterDepth, bearing._ballRad);
+            DrawOuterRim(innerRimDoc, bearing._bearingWidth, bearing._innerRimDiam, bearing._outerRimDiam);
             innerRimSketchDef.EndEdit(); //закончили редактировать эскиз
             //-------------------------------------
             ksPart topStoolPart1 = doc.GetPart((short)Kompas6Constants3D.Part_Type.pTop_Part); //указатель на деталь
@@ -95,7 +95,7 @@ namespace BearingPlugin
             ksEntity circrotate = part.NewEntity((short)Obj3dType.o3d_circularCopy);
             ksCircularCopyDefinition cpyRotDef = circrotate.GetDefinition();
             cpyRotDef.SetAxis(axis);
-            cpyRotDef.SetCopyParamAlongDir(8, 45, false, false);
+            cpyRotDef.SetCopyParamAlongDir(6, 45, false, false);
             EntityCollection circcoll = (cpyRotDef.GetOperationArray());
             circcoll.Clear();
             circcoll.Add(rotate);
@@ -114,47 +114,59 @@ namespace BearingPlugin
         private static void DrawInnerRim(ksDocument2D innerRimDoc, double BearingWidth, double InnerRimDiam, double OuterRimDiam)
         {
             float ballDiam = (float)BearingWidth / 2;
-            float gutterDepth = Math.Abs((float)((ballDiam - (OuterRimDiam - InnerRimDiam)/2) / 2));
+            float rimWidth = (float)((OuterRimDiam - InnerRimDiam) / 6);
+            float gutterDepth = Math.Abs((float)((ballDiam - rimWidth)/2));
             float cutRad = (float)(Math.Sqrt(Math.Pow(ballDiam/2, 2) - Math.Pow(ballDiam/2 - gutterDepth, 2)));
+            
 
             innerRimDoc.ksLineSeg(-BearingWidth/2, 0 , BearingWidth/2 , 0 , 3);
              //основание
             innerRimDoc.ksLineSeg(-BearingWidth/2, InnerRimDiam/2, BearingWidth / 2, InnerRimDiam / 2, 1);
             //левая грань
-            innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimDiam / 2, -BearingWidth / 2, (OuterRimDiam-InnerRimDiam)/4 + BearingWidth / 2, 1);
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimDiam / 2, -BearingWidth / 2, rimWidth + InnerRimDiam/2, 1);
             //правая грань
-            innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimDiam / 2, BearingWidth / 2, (OuterRimDiam - InnerRimDiam) / 4 + BearingWidth / 2, 1);
+            innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimDiam / 2, BearingWidth / 2, rimWidth + InnerRimDiam / 2, 1);
             //левое верхнее
-            innerRimDoc.ksLineSeg(-BearingWidth / 2, (OuterRimDiam - InnerRimDiam) / 4 + BearingWidth / 2, -cutRad, 
-                (OuterRimDiam - InnerRimDiam) / 4 + BearingWidth / 2, 1);
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, rimWidth + InnerRimDiam / 2, -cutRad, rimWidth + InnerRimDiam / 2, 1);
             //правое верхнее
-            innerRimDoc.ksLineSeg(BearingWidth / 2, (OuterRimDiam - InnerRimDiam) / 4 + BearingWidth / 2, cutRad, 
-                (OuterRimDiam - InnerRimDiam) / 4 + BearingWidth / 2, 1);
+            innerRimDoc.ksLineSeg(BearingWidth / 2, rimWidth + InnerRimDiam / 2, cutRad, rimWidth + InnerRimDiam / 2, 1);
             //дуга
-            innerRimDoc.ksArcBy3Points(-cutRad ,(OuterRimDiam - InnerRimDiam) / 4 + BearingWidth / 2, 0 , 
-                (OuterRimDiam - InnerRimDiam) / 4 - gutterDepth + InnerRimDiam / 2, cutRad ,
-                (OuterRimDiam - InnerRimDiam) / 4 + BearingWidth / 2, 1);
+            innerRimDoc.ksArcBy3Points(-cutRad , rimWidth + InnerRimDiam / 2, 0 , rimWidth + InnerRimDiam / 2  - gutterDepth, 
+                cutRad, rimWidth + InnerRimDiam / 2, 1);
 
             
         }
-        private static void DrawOuterRim(ksDocument2D innerRimDoc, double BearingWidth, double InnerRimRad, double InnerRimWidth, double GutterDepth, double BallRad)
+        private static void DrawOuterRim(ksDocument2D innerRimDoc, double BearingWidth, double InnerRimDiam, double OuterRimDiam)
         {
-            /*float cutRad = (float)(Math.Sqrt(Math.Pow(BallRad, 2) - Math.Pow(BallRad - GutterDepth, 2)));
-            innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, 1);
-            innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, -BearingWidth / 2, InnerRimRad + BallRad, 1);
-            innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad + InnerRimWidth + BallRad, BearingWidth / 2, InnerRimRad + BallRad, 1);
-            innerRimDoc.ksLineSeg(-BearingWidth / 2, InnerRimRad + BallRad, -(BearingWidth / 2) + cutRad, InnerRimRad + BallRad, 1);
-            innerRimDoc.ksLineSeg(BearingWidth / 2, InnerRimRad + BallRad, (BearingWidth / 2) - cutRad, InnerRimRad + BallRad, 1);
-            innerRimDoc.ksArcBy3Points(-(BearingWidth / 2) + cutRad, InnerRimRad + BallRad, 0, InnerRimRad + BallRad + GutterDepth, (BearingWidth / 2) - cutRad, InnerRimRad + BallRad, 1);
-            innerRimDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);*/
+            float ballDiam = (float)BearingWidth / 2;
+            float rimWidth = (float)((OuterRimDiam - InnerRimDiam) / 6);
+            float gutterDepth = Math.Abs((float)((ballDiam - rimWidth) / 2));
+            float cutRad = (float)(Math.Sqrt(Math.Pow(ballDiam / 2, 2) - Math.Pow(ballDiam / 2 - gutterDepth, 2)));
+            // осевая
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);
+            // основание
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2, BearingWidth / 2, OuterRimDiam / 2, 1);
+            // левая грань
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2, -BearingWidth / 2, OuterRimDiam / 2 - rimWidth, 1);
+            // правая грань
+            innerRimDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2, BearingWidth / 2, OuterRimDiam / 2 - rimWidth, 1);
+            // левое верхнее
+            innerRimDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - rimWidth, -cutRad, OuterRimDiam / 2 - rimWidth, 1);
+            // правое верхнее 
+            innerRimDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - rimWidth, cutRad, OuterRimDiam / 2 - rimWidth, 1);
+            // дуга
+            innerRimDoc.ksArcBy3Points(-cutRad, OuterRimDiam / 2 - rimWidth, 0, OuterRimDiam / 2 - rimWidth + gutterDepth, cutRad, OuterRimDiam / 2 - rimWidth, 1);
+
         }
         private static void DrawBalls(ksDocument2D doc2d,double BearingWidth, double InnerRimDiam, double OuterRimDiam)
         {
             float ballDiam = (float)BearingWidth / 2;
-            float gutterDepth = Math.Abs((float)((ballDiam - (OuterRimDiam - InnerRimDiam) / 2) / 2));
+            float rimWidth = (float)((OuterRimDiam - InnerRimDiam) / 6);
+            float gutterDepth = Math.Abs((float)((ballDiam - rimWidth) / 2));
+            float cutRad = (float)(Math.Sqrt(Math.Pow(ballDiam / 2, 2) - Math.Pow(ballDiam / 2 - gutterDepth, 2)));
             //Эскиз шариков
-            doc2d.ksArcByAngle(0, (OuterRimDiam - InnerRimDiam) / 4 - gutterDepth + InnerRimDiam / 2 + ballDiam/2, ballDiam/2, -90, 90, 1, 1);
-            doc2d.ksLineSeg(0, (OuterRimDiam - InnerRimDiam) / 4 - gutterDepth + InnerRimDiam / 2, 0, (OuterRimDiam - InnerRimDiam) / 4 - gutterDepth + InnerRimDiam / 2 + ballDiam, 3);
+            doc2d.ksArcByAngle(0, rimWidth + InnerRimDiam / 2 - gutterDepth + ballDiam / 2, ballDiam / 2, -90, 90, 1, 1);
+            doc2d.ksLineSeg(0, (OuterRimDiam - InnerRimDiam) / 6 - gutterDepth + InnerRimDiam / 2, 0, OuterRimDiam / 2 - (OuterRimDiam - InnerRimDiam) / 6 + gutterDepth, 3);
         }
     }
 }
