@@ -20,6 +20,14 @@ namespace BearingPlugin
         /// Диаметр внешнего обода
         /// </summary>
         public double _outerRimDiam;
+        /// <summary>
+        /// Толщина ободов
+        /// </summary>
+        public double _rimsThickness;
+        /// <summary>
+        /// Диаметр шарика
+        /// </summary>
+        public double _ballDiam;
 
         /// <summary>
         /// Геттер и сеттер на ирину подшипника
@@ -65,26 +73,59 @@ namespace BearingPlugin
                     _outerRimDiam = value;
             }
         }
+        /// <summary>
+        /// Геттер и Сеттер для толщины колец
+        /// </summary>
+        private double RimsThickness
+        {
+            get => _rimsThickness;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("Толщина ободов не может быть отрицательной");
+                else
+                    _rimsThickness = value;
+            }
+        }
+        /// <summary>
+        /// Геттер и Сеттер для диаметра шариков
+        /// </summary>
+        private double BallDiam
+        {
+            get => _ballDiam;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentException("Диаметр шарика не может быть отрицательным");
+                else
+                    _ballDiam = value;
+            }
+        }
 
         /// <summary>
-        /// Присваиваем значения
+        /// Присвоение значений и проверка пропорций
         /// </summary>
         /// <param name="bearingWidth"></param>
         /// <param name="innerRimDiam"></param>
         /// <param name="outerRimDiam"></param>
-        public BearingParametrs(double bearingWidth, double innerRimDiam, double outerRimDiam)
+        public BearingParametrs(double bearingWidth, double innerRimDiam, double outerRimDiam, double rimsThickness, double ballDiam)
         {
-            if (innerRimDiam > outerRimDiam || innerRimDiam == outerRimDiam || outerRimDiam-innerRimDiam < 5)
+            if (innerRimDiam > outerRimDiam || rimsThickness > (outerRimDiam-innerRimDiam)/4 
+                || rimsThickness < (outerRimDiam - innerRimDiam) / 4 - ballDiam / 2 + 0.1
+                || innerRimDiam == outerRimDiam || outerRimDiam - innerRimDiam < 5
+                || ballDiam > bearingWidth || ballDiam > (outerRimDiam - innerRimDiam) / 2 - 0.2)
             {
-                throw new ArgumentException("Заданы не верные пропорции!");
+                throw new ArgumentException("Неверно заданы пропорции");
             }
             else
-            {
+            { 
                 BearingWidth = bearingWidth;
                 InnerRimDiam = innerRimDiam;
                 OuterRimDiam = outerRimDiam;
+                RimsThickness = rimsThickness;
+                BallDiam = ballDiam;
+
             }
-        
         }
     }
 }

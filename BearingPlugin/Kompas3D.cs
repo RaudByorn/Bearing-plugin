@@ -8,38 +8,58 @@ using Kompas6Constants;
 using Kompas6Constants3D;
 using KAPITypes;
 using KompasAPI7;
+using System.Runtime.InteropServices;
 using reference = System.Int32;
 
 namespace BearingPlugin
 {
     class Kompas3D
     {
-        public KompasObject _kompas = null;
-
-        public Kompas3D()
+        /// <summary>
+        /// Объект компаса
+        /// </summary>
+        private KompasObject _kompas = null;
+        /// <summary>
+        /// Запускаем компас
+        /// </summary>
+        private void RunningKompas()
         {
-
-        }
-        public void RunKompas3D()
-        {
-            if (_kompas == null)
+            try
             {
-                Type t = Type.GetTypeFromProgID("KOMPAS.Application.5");
-                _kompas = (KompasObject)Activator.CreateInstance(t);
-            }
+                if (_kompas != null)
+                {
+                    _kompas.Visible = true;
+                    _kompas.ActivateControllerAPI();
+                }
 
-            if (_kompas != null)
+                if (_kompas == null)
+                {
+                    var t = Type.GetTypeFromProgID("KOMPAS.Application.5");
+                    _kompas = (KompasObject)Activator.CreateInstance(t);
+
+                    RunningKompas();
+
+                    if (_kompas == null) throw new Exception("Нет связи с Kompas3D.");
+                }
+            }
+            catch (COMException)
             {
-                _kompas.Visible = true;
-                _kompas.ActivateControllerAPI();
+                _kompas = null;
+                RunningKompas();
             }
-
-            if (_kompas == null) throw new Exception("Нет связи с Kompas3D.");
-
         }
+        /// <summary>
+        /// строим подшипник
+        /// </summary>
+        /// <param name="bearing"></param>
         public void BuildBearing(BearingParametrs bearing)
         {
+            RunningKompas();
+
             if (_kompas == null) throw new Exception("Не возможно построить деталь. Нет связи с Kompas3D.");
+
+            if (bearing == null)
+                throw new ArgumentNullException(nameof(bearing));
 
             ksDocument3D doc = _kompas.Document3D();
             doc.Create();
@@ -58,8 +78,8 @@ namespace BearingPlugin
             rimsSketch.Create();
             //входим в режим редактирование эскиза
             ksDocument2D rimsDoc = rimsSketchDef.BeginEdit();
-            DrawInnerRim(rimsDoc, bearing._bearingWidth, bearing._innerRimDiam, bearing._outerRimDiam);
-            DrawOuterRim(rimsDoc, bearing._bearingWidth, bearing._innerRimDiam, bearing._outerRimDiam);
+            DrawInnerRim(rimsDoc, bearing._bearingWidth, bearing._innerRimDiam, bearing._outerRimDiam, bearing._rimsThickness, bearing._ballDiam);
+            DrawOuterRim(rimsDoc, bearing._bearingWidth, bearing._innerRimDiam, bearing._outerRimDiam, bearing._rimsThickness, bearing._ballDiam);
             //закончили редактировать эскиз
             rimsSketchDef.EndEdit(); 
 
@@ -70,7 +90,7 @@ namespace BearingPlugin
             ballSketchDef.SetPlane(planeXOY1);
             ballSketch.Create();
             ksDocument2D ballDoc = ballSketchDef.BeginEdit();
-            DrawBalls(ballDoc, bearing._bearingWidth, bearing._innerRimDiam, bearing._outerRimDiam);
+            DrawBalls(ballDoc, bearing._bearingWidth, bearing._innerRimDiam, bearing._outerRimDiam, bearing._rimsThickness, bearing._ballDiam);
             ballSketchDef.EndEdit();
 
             
@@ -83,6 +103,14 @@ namespace BearingPlugin
 
             ksEntity mas = ball.NewEntity((short)Obj3dType.o3d_circularCopy);
         }
+        /// <summary>
+        /// Создание массива шариков по концентрической сетке
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="sketch"></param>
+        /// <param name="type"></param>
+        /// <param name="planeXOZ"></param>
+        /// <param name="planeYOZ"></param>
         private static void BallsConcentricArray(ksPart part, ksEntity sketch, short type, ksEntity planeXOZ, ksEntity planeYOZ)
         {
             ksEntity rotate = part.NewEntity((short)Obj3dType.o3d_bossRotated);
@@ -108,6 +136,12 @@ namespace BearingPlugin
             circcoll.Add(rotate);
             circrotate.Create();
         }
+        /// <summary>
+        /// Выдавливание вращением
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="sketch"></param>
+        /// <param name="type"></param>
         private static void BossRotatedExtrusion(ksPart part, ksEntity sketch, short type)
         {
             ksEntity bossRotated = part.NewEntity((short)Obj3dType.o3d_bossRotated);
@@ -118,61 +152,78 @@ namespace BearingPlugin
             ksRotatedParam rotateParam = bossRotatedDef.RotatedParam();
             bossRotated.Create();
         }
-        private static void DrawInnerRim(ksDocument2D rimsDoc, double BearingWidth, double InnerRimDiam, double OuterRimDiam)
+        /// <summary>
+        /// Рисуем эскиз внутреннего обода
+        /// </summary>
+        /// <param name="rimsDoc"></param>
+        /// <param name="BearingWidth"></param>
+        /// <param name="InnerRimDiam"></param>
+        /// <param name="OuterRimDiam"></param>
+        /// <param name="RimsThickness"></param>
+        /// <param name="BallDiam"></param>
+        private static void DrawInnerRim(ksDocument2D rimsDoc, double BearingWidth, double InnerRimDiam, double OuterRimDiam, double RimsThickness, double BallDiam)
         {
-            float ballDiam = (float)BearingWidth / 2;
-            float rimWidth = (float)((OuterRimDiam - InnerRimDiam) / 6);
-            float gutterDepth = Math.Abs((float)((ballDiam - rimWidth)/2));
-            float cutRad = (float)(Math.Sqrt(Math.Pow(ballDiam/2, 2) - Math.Pow(ballDiam/2 - gutterDepth, 2)));
-            
-
+            double bearingCenter = (OuterRimDiam - InnerRimDiam) / 4 + InnerRimDiam / 2;
+            double gutterDepth = BallDiam / 2 - (bearingCenter - InnerRimDiam / 2 - RimsThickness);
+            double gutterWidth = (Math.Sqrt((BallDiam / 2) * (BallDiam / 2) - (BallDiam / 2 - gutterDepth) * (BallDiam / 2 - gutterDepth)));
             rimsDoc.ksLineSeg(-BearingWidth/2, 0 , BearingWidth/2 , 0 , 3);
             //основание
             rimsDoc.ksLineSeg(-BearingWidth/2, InnerRimDiam/2, BearingWidth / 2, InnerRimDiam / 2, 1);
             //левая грань
-            rimsDoc.ksLineSeg(-BearingWidth / 2, InnerRimDiam / 2, -BearingWidth / 2, rimWidth + InnerRimDiam/2, 1);
+            rimsDoc.ksLineSeg(-BearingWidth / 2, InnerRimDiam / 2, -BearingWidth / 2, RimsThickness + InnerRimDiam / 2, 1);
             //правая грань
-            rimsDoc.ksLineSeg(BearingWidth / 2, InnerRimDiam / 2, BearingWidth / 2, rimWidth + InnerRimDiam / 2, 1);
-            //левое верхнее
-            rimsDoc.ksLineSeg(-BearingWidth / 2, rimWidth + InnerRimDiam / 2, -cutRad, rimWidth + InnerRimDiam / 2, 1);
-            //правое верхнее
-            rimsDoc.ksLineSeg(BearingWidth / 2, rimWidth + InnerRimDiam / 2, cutRad, rimWidth + InnerRimDiam / 2, 1);
-            //дуга
-            rimsDoc.ksArcBy3Points(-cutRad , rimWidth + InnerRimDiam / 2, 0 , rimWidth + InnerRimDiam / 2  - gutterDepth, 
-                cutRad, rimWidth + InnerRimDiam / 2, 1);
+            rimsDoc.ksLineSeg(BearingWidth / 2, InnerRimDiam / 2, BearingWidth / 2, RimsThickness + InnerRimDiam / 2, 1);
+            //левая верхняя
+            rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, -gutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+            //правая верхняя
+            rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, gutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+            // желоб
+            rimsDoc.ksArcBy3Points(-gutterWidth, RimsThickness + InnerRimDiam / 2, 
+                0 , RimsThickness + InnerRimDiam / 2 - gutterDepth, gutterWidth, RimsThickness + InnerRimDiam / 2, 1);
 
-            
         }
-        private static void DrawOuterRim(ksDocument2D rimsDoc, double BearingWidth, double InnerRimDiam, double OuterRimDiam)
+        /// <summary>
+        /// Рисуем эскиз внешнего обода
+        /// </summary>
+        /// <param name="rimsDoc"></param>
+        /// <param name="BearingWidth"></param>
+        /// <param name="InnerRimDiam"></param>
+        /// <param name="OuterRimDiam"></param>
+        /// <param name="RimsThickness"></param>
+        /// <param name="BallDiam"></param>
+        private static void DrawOuterRim(ksDocument2D rimsDoc, double BearingWidth, double InnerRimDiam, double OuterRimDiam, double RimsThickness, double BallDiam)
         {
-            float ballDiam = (float)BearingWidth / 2;
-            float rimWidth = (float)((OuterRimDiam - InnerRimDiam) / 6);
-            float gutterDepth = Math.Abs((float)((ballDiam - rimWidth) / 2));
-            float cutRad = (float)(Math.Sqrt(Math.Pow(ballDiam / 2, 2) - Math.Pow(ballDiam / 2 - gutterDepth, 2)));
-            // осевая
-            //rimsDoc.ksLineSeg(-BearingWidth / 2, 0, BearingWidth / 2, 0, 3);
-            // основание
+            double bearingCenter = (OuterRimDiam - InnerRimDiam) / 4 + InnerRimDiam / 2;
+            double gutterDepth = BallDiam / 2 - (bearingCenter - InnerRimDiam / 2 - RimsThickness);
+            double gutterWidth = (Math.Sqrt((BallDiam / 2) * (BallDiam / 2) - (BallDiam / 2 - gutterDepth) * (BallDiam / 2 - gutterDepth)));
+
             rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2, BearingWidth / 2, OuterRimDiam / 2, 1);
-            // левая грань
-            rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2, -BearingWidth / 2, OuterRimDiam / 2 - rimWidth, 1);
-            // правая грань
-            rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2, BearingWidth / 2, OuterRimDiam / 2 - rimWidth, 1);
-            // левое верхнее
-            rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - rimWidth, -cutRad, OuterRimDiam / 2 - rimWidth, 1);
-            // правое верхнее 
-            rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - rimWidth, cutRad, OuterRimDiam / 2 - rimWidth, 1);
-            // дуга
-            rimsDoc.ksArcBy3Points(-cutRad, OuterRimDiam / 2 - rimWidth, 0, OuterRimDiam / 2 - rimWidth + gutterDepth, cutRad, OuterRimDiam / 2 - rimWidth, 1);
+            rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2, -BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 1);
+            rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2, BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 1);
+            rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, -gutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+            rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, gutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+            rimsDoc.ksArcBy3Points(-gutterWidth ,OuterRimDiam / 2 - RimsThickness,
+                0,  OuterRimDiam / 2 - RimsThickness + gutterDepth, gutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+
 
         }
-        private static void DrawBalls(ksDocument2D doc2d,double BearingWidth, double InnerRimDiam, double OuterRimDiam)
+        /// <summary>
+        /// Рисуем эских шарика
+        /// </summary>
+        /// <param name="ballDoc"></param>
+        /// <param name="BearingWidth"></param>
+        /// <param name="InnerRimDiam"></param>
+        /// <param name="OuterRimDiam"></param>
+        /// <param name="RimsThickness"></param>
+        /// <param name="BallDiam"></param>
+        private static void DrawBalls(ksDocument2D ballDoc, double BearingWidth, double InnerRimDiam, double OuterRimDiam, double RimsThickness, double BallDiam)
         {
-            float ballDiam = (float)BearingWidth / 2;
-            float rimWidth = (float)((OuterRimDiam - InnerRimDiam) / 6);
-            float gutterDepth = Math.Abs((float)((ballDiam - rimWidth) / 2));
+            double bearingCenter = (OuterRimDiam - InnerRimDiam) / 4 + InnerRimDiam / 2;
+            double gutterDepth = BallDiam / 2 - (bearingCenter - InnerRimDiam / 2 - RimsThickness);
+            double gutterWidth = (Math.Sqrt((BallDiam / 2) * (BallDiam / 2) - (BallDiam / 2 - gutterDepth) * (BallDiam / 2 - gutterDepth)));
             //Эскиз шариков
-            doc2d.ksArcByAngle(0, rimWidth + InnerRimDiam / 2 - gutterDepth + ballDiam / 2, ballDiam / 2, -90, 90, 1, 1);
-            doc2d.ksLineSeg(0, (OuterRimDiam - InnerRimDiam) / 6 - gutterDepth + InnerRimDiam / 2, 0, OuterRimDiam / 2 - (OuterRimDiam - InnerRimDiam) / 6 + gutterDepth, 3);
+            ballDoc.ksArcByAngle(0, (OuterRimDiam - InnerRimDiam) / 4 + InnerRimDiam / 2, BallDiam / 2, -90, 90, 1, 1);
+            ballDoc.ksLineSeg(0, 0, 0, 1, 3);
         }
     }
 }

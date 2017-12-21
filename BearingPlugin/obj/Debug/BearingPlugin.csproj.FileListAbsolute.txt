@@ -13,3 +13,5 @@ c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.exe
 c:\users\nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.pdb
 C:\Users\Nikit\source\repos\BearingPlugin\BearingPlugin\obj\Debug\BearingPlugin.MainForm.resources
+C:\Users\Nikit\source\repos\BearingPlugin\BearingPlugin\bin\Debug\MaterialSkin.dll
+C:\Users\Nikit\source\repos\BearingPlugin\BearingPlugin\bin\Debug\KAPITypes.dll
