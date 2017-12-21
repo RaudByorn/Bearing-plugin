@@ -31,16 +31,16 @@
             this.startButton = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.bearingWidthBox = new System.Windows.Forms.TextBox();
-            this.innerRimRadBox = new System.Windows.Forms.TextBox();
-            this.innerRimWidthBox = new System.Windows.Forms.TextBox();
-            this.gutterDepthBox = new System.Windows.Forms.TextBox();
+            this.innerRimDiamBox = new System.Windows.Forms.TextBox();
+            this.outerRimDiamBox = new System.Windows.Forms.TextBox();
             this.bearingWidthLabel = new System.Windows.Forms.Label();
-            this.innerRimRadLabel = new System.Windows.Forms.Label();
-            this.innerRimWidthLabel = new System.Windows.Forms.Label();
-            this.gutterDepthLabel = new System.Windows.Forms.Label();
-            this.ballRadBox = new System.Windows.Forms.TextBox();
-            this.ballRadLabel = new System.Windows.Forms.Label();
+            this.innerRimDiamLabel = new System.Windows.Forms.Label();
+            this.outerRimDiamLabel = new System.Windows.Forms.Label();
             this.TestModParam = new System.Windows.Forms.Button();
+            this.ballDiamBox = new System.Windows.Forms.TextBox();
+            this.rimsThicknessBox = new System.Windows.Forms.TextBox();
+            this.ballDiamLabel = new System.Windows.Forms.Label();
+            this.rimsThicknessLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // startButton
@@ -71,29 +71,21 @@
             this.bearingWidthBox.TabIndex = 2;
             this.bearingWidthBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.bearingWidthBox_KeyPress);
             // 
-            // innerRimRadBox
+            // innerRimDiamBox
             // 
-            this.innerRimRadBox.Location = new System.Drawing.Point(12, 38);
-            this.innerRimRadBox.Name = "innerRimRadBox";
-            this.innerRimRadBox.Size = new System.Drawing.Size(100, 20);
-            this.innerRimRadBox.TabIndex = 3;
-            this.innerRimRadBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.innerRimRadBox_KeyPress);
+            this.innerRimDiamBox.Location = new System.Drawing.Point(12, 38);
+            this.innerRimDiamBox.Name = "innerRimDiamBox";
+            this.innerRimDiamBox.Size = new System.Drawing.Size(100, 20);
+            this.innerRimDiamBox.TabIndex = 3;
+            this.innerRimDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.innerRimDiamBox_KeyPress);
             // 
-            // innerRimWidthBox
+            // outerRimDiamBox
             // 
-            this.innerRimWidthBox.Location = new System.Drawing.Point(12, 64);
-            this.innerRimWidthBox.Name = "innerRimWidthBox";
-            this.innerRimWidthBox.Size = new System.Drawing.Size(100, 20);
-            this.innerRimWidthBox.TabIndex = 4;
-            this.innerRimWidthBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.innerRimWidthBox_KeyPress);
-            // 
-            // gutterDepthBox
-            // 
-            this.gutterDepthBox.Location = new System.Drawing.Point(12, 90);
-            this.gutterDepthBox.Name = "gutterDepthBox";
-            this.gutterDepthBox.Size = new System.Drawing.Size(100, 20);
-            this.gutterDepthBox.TabIndex = 5;
-            this.gutterDepthBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.gutterDepthBox_KeyPress);
+            this.outerRimDiamBox.Location = new System.Drawing.Point(12, 64);
+            this.outerRimDiamBox.Name = "outerRimDiamBox";
+            this.outerRimDiamBox.Size = new System.Drawing.Size(100, 20);
+            this.outerRimDiamBox.TabIndex = 4;
+            this.outerRimDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.outerRimDiamBox_KeyPress);
             // 
             // bearingWidthLabel
             // 
@@ -104,49 +96,23 @@
             this.bearingWidthLabel.TabIndex = 6;
             this.bearingWidthLabel.Text = "Ширина подшипника";
             // 
-            // innerRimRadLabel
+            // innerRimDiamLabel
             // 
-            this.innerRimRadLabel.AutoSize = true;
-            this.innerRimRadLabel.Location = new System.Drawing.Point(118, 41);
-            this.innerRimRadLabel.Name = "innerRimRadLabel";
-            this.innerRimRadLabel.Size = new System.Drawing.Size(142, 13);
-            this.innerRimRadLabel.TabIndex = 7;
-            this.innerRimRadLabel.Text = "Радиус внутреннего обода";
+            this.innerRimDiamLabel.AutoSize = true;
+            this.innerRimDiamLabel.Location = new System.Drawing.Point(118, 41);
+            this.innerRimDiamLabel.Name = "innerRimDiamLabel";
+            this.innerRimDiamLabel.Size = new System.Drawing.Size(152, 13);
+            this.innerRimDiamLabel.TabIndex = 7;
+            this.innerRimDiamLabel.Text = "Диаметр внутреннего обода";
             // 
-            // innerRimWidthLabel
+            // outerRimDiamLabel
             // 
-            this.innerRimWidthLabel.AutoSize = true;
-            this.innerRimWidthLabel.Location = new System.Drawing.Point(119, 70);
-            this.innerRimWidthLabel.Name = "innerRimWidthLabel";
-            this.innerRimWidthLabel.Size = new System.Drawing.Size(145, 13);
-            this.innerRimWidthLabel.TabIndex = 8;
-            this.innerRimWidthLabel.Text = "Ширина внутреннего обода";
-            // 
-            // gutterDepthLabel
-            // 
-            this.gutterDepthLabel.AutoSize = true;
-            this.gutterDepthLabel.Location = new System.Drawing.Point(119, 97);
-            this.gutterDepthLabel.Name = "gutterDepthLabel";
-            this.gutterDepthLabel.Size = new System.Drawing.Size(89, 13);
-            this.gutterDepthLabel.TabIndex = 9;
-            this.gutterDepthLabel.Text = "Глубина желоба";
-            // 
-            // ballRadBox
-            // 
-            this.ballRadBox.Location = new System.Drawing.Point(12, 116);
-            this.ballRadBox.Name = "ballRadBox";
-            this.ballRadBox.Size = new System.Drawing.Size(100, 20);
-            this.ballRadBox.TabIndex = 10;
-            this.ballRadBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ballRadBox_KeyPress);
-            // 
-            // ballRadLabel
-            // 
-            this.ballRadLabel.AutoSize = true;
-            this.ballRadLabel.Location = new System.Drawing.Point(118, 119);
-            this.ballRadLabel.Name = "ballRadLabel";
-            this.ballRadLabel.Size = new System.Drawing.Size(84, 13);
-            this.ballRadLabel.TabIndex = 11;
-            this.ballRadLabel.Text = "Радиус шарика";
+            this.outerRimDiamLabel.AutoSize = true;
+            this.outerRimDiamLabel.Location = new System.Drawing.Point(119, 70);
+            this.outerRimDiamLabel.Name = "outerRimDiamLabel";
+            this.outerRimDiamLabel.Size = new System.Drawing.Size(138, 13);
+            this.outerRimDiamLabel.TabIndex = 8;
+            this.outerRimDiamLabel.Text = "Диаметр внешнего обода";
             // 
             // TestModParam
             // 
@@ -158,21 +124,55 @@
             this.TestModParam.UseVisualStyleBackColor = true;
             this.TestModParam.Click += new System.EventHandler(this.TestModParam_Click);
             // 
+            // ballDiamBox
+            // 
+            this.ballDiamBox.Location = new System.Drawing.Point(13, 91);
+            this.ballDiamBox.Name = "ballDiamBox";
+            this.ballDiamBox.Size = new System.Drawing.Size(100, 20);
+            this.ballDiamBox.TabIndex = 13;
+            this.ballDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ballDiamBox_KeyPress);
+            // 
+            // rimsThicknessBox
+            // 
+            this.rimsThicknessBox.Location = new System.Drawing.Point(13, 118);
+            this.rimsThicknessBox.Name = "rimsThicknessBox";
+            this.rimsThicknessBox.Size = new System.Drawing.Size(100, 20);
+            this.rimsThicknessBox.TabIndex = 14;
+            this.rimsThicknessBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.rimsThicknessBox_KeyPress);
+            // 
+            // ballDiamLabel
+            // 
+            this.ballDiamLabel.AutoSize = true;
+            this.ballDiamLabel.Location = new System.Drawing.Point(120, 97);
+            this.ballDiamLabel.Name = "ballDiamLabel";
+            this.ballDiamLabel.Size = new System.Drawing.Size(94, 13);
+            this.ballDiamLabel.TabIndex = 15;
+            this.ballDiamLabel.Text = "Диаметр шарика";
+            // 
+            // rimsThicknessLabel
+            // 
+            this.rimsThicknessLabel.AutoSize = true;
+            this.rimsThicknessLabel.Location = new System.Drawing.Point(120, 124);
+            this.rimsThicknessLabel.Name = "rimsThicknessLabel";
+            this.rimsThicknessLabel.Size = new System.Drawing.Size(92, 13);
+            this.rimsThicknessLabel.TabIndex = 16;
+            this.rimsThicknessLabel.Text = "Толщина ободов";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.rimsThicknessLabel);
+            this.Controls.Add(this.ballDiamLabel);
+            this.Controls.Add(this.rimsThicknessBox);
+            this.Controls.Add(this.ballDiamBox);
             this.Controls.Add(this.TestModParam);
-            this.Controls.Add(this.ballRadLabel);
-            this.Controls.Add(this.ballRadBox);
-            this.Controls.Add(this.gutterDepthLabel);
-            this.Controls.Add(this.innerRimWidthLabel);
-            this.Controls.Add(this.innerRimRadLabel);
+            this.Controls.Add(this.outerRimDiamLabel);
+            this.Controls.Add(this.innerRimDiamLabel);
             this.Controls.Add(this.bearingWidthLabel);
-            this.Controls.Add(this.gutterDepthBox);
-            this.Controls.Add(this.innerRimWidthBox);
-            this.Controls.Add(this.innerRimRadBox);
+            this.Controls.Add(this.outerRimDiamBox);
+            this.Controls.Add(this.innerRimDiamBox);
             this.Controls.Add(this.bearingWidthBox);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.startButton);
@@ -188,16 +188,16 @@
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox bearingWidthBox;
-        private System.Windows.Forms.TextBox innerRimRadBox;
-        private System.Windows.Forms.TextBox innerRimWidthBox;
-        private System.Windows.Forms.TextBox gutterDepthBox;
+        private System.Windows.Forms.TextBox innerRimDiamBox;
+        private System.Windows.Forms.TextBox outerRimDiamBox;
         private System.Windows.Forms.Label bearingWidthLabel;
-        private System.Windows.Forms.Label innerRimRadLabel;
-        private System.Windows.Forms.Label innerRimWidthLabel;
-        private System.Windows.Forms.Label gutterDepthLabel;
-        private System.Windows.Forms.TextBox ballRadBox;
-        private System.Windows.Forms.Label ballRadLabel;
+        private System.Windows.Forms.Label innerRimDiamLabel;
+        private System.Windows.Forms.Label outerRimDiamLabel;
         private System.Windows.Forms.Button TestModParam;
+        private System.Windows.Forms.TextBox ballDiamBox;
+        private System.Windows.Forms.TextBox rimsThicknessBox;
+        private System.Windows.Forms.Label ballDiamLabel;
+        private System.Windows.Forms.Label rimsThicknessLabel;
     }
 }
 

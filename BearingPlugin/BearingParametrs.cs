@@ -13,21 +13,21 @@ namespace BearingPlugin
         /// </summary>
         public double _bearingWidth;
         /// <summary>
-        /// Радиус внутреннего обода
+        /// Диаметр внутреннего обода
         /// </summary>
-        public double _innerRimRad;
+        public double _innerRimDiam;
         /// <summary>
-        /// Ширина внутреннего обода
+        /// Диаметр внешнего обода
         /// </summary>
-        public double _innerRimWidth;
+        public double _outerRimDiam;
         /// <summary>
-        /// Глубина желоба
+        /// Толщина ободов
         /// </summary>
-        public double _gutterDepth;
+        public double _rimsThickness;
         /// <summary>
-        /// Радиус шариков
+        /// Диаметр шарика
         /// </summary>
-        public double _ballRad;
+        public double _ballDiam;
 
         /// <summary>
         /// Геттер и сеттер на ирину подшипника
@@ -37,73 +37,95 @@ namespace BearingPlugin
             get => _bearingWidth;
             set
             {
-                _bearingWidth = value;
+                if (value < 3 || value > 16)
+                    throw new ArgumentException("Ширина подшипника не должна быть меньше 3 и превышать 16!");
+                else
+                    _bearingWidth = value;
             }
         }
 
         /// <summary>
         /// Геттер и сеттер на радиус внутреннего обода
         /// </summary>
-        private double InnerRimRad
+        private double InnerRimDiam
         {
-            get => _innerRimRad;
+            get => _innerRimDiam;
             set
             {
-                _innerRimRad = value;
+                if (value < 3 || value > 75)
+                    throw new ArgumentException("Диаметр внутреннего кольца не должен быть меньше 3 и превышать 75!");
+                else
+                    _innerRimDiam = value;
             }
         }
 
         /// <summary>
         /// Геттер и сеттер на ширину внутреннего обода
         /// </summary>
-        private double InnerRimWidth
+        private double OuterRimDiam
         {
-            get => _innerRimWidth;
+            get => _outerRimDiam;
             set
             {
-                _innerRimWidth = value;
+                if (value < 3 || value > 105)
+                    throw new ArgumentException("Диаметр внешнего кольца не должен быть меньше 3 и превышать 105!");
+                else
+                    _outerRimDiam = value;
             }
         }
-
         /// <summary>
-        /// Геттер и сеттер на глубину желоба
+        /// Геттер и Сеттер для толщины колец
         /// </summary>
-        private double GutterDepth
+        private double RimsThickness
         {
-            get => _gutterDepth;
+            get => _rimsThickness;
             set
             {
-                _gutterDepth = value;
+                if (value < 0)
+                    throw new ArgumentException("Толщина ободов не может быть отрицательной");
+                else
+                    _rimsThickness = value;
             }
         }
-
         /// <summary>
-        /// Геттер и сеттер на радиус шарика
+        /// Геттер и Сеттер для диаметра шариков
         /// </summary>
-        private double BallRad
+        private double BallDiam
         {
-            get => _ballRad;
+            get => _ballDiam;
             set
             {
-                _ballRad = value;
+                if (value < 0)
+                    throw new ArgumentException("Диаметр шарика не может быть отрицательным");
+                else
+                    _ballDiam = value;
             }
         }
 
         /// <summary>
-        /// Присваиваем переменные
+        /// Присвоение значений и проверка пропорций
         /// </summary>
         /// <param name="bearingWidth"></param>
-        /// <param name="innerRimRad"></param>
-        /// <param name="innerRimWidth"></param>
-        /// <param name="gutterDepth"></param>
-        /// <param name="ballRad"></param>
-        public BearingParametrs(double bearingWidth, double innerRimRad, double innerRimWidth, double gutterDepth, double ballRad)
+        /// <param name="innerRimDiam"></param>
+        /// <param name="outerRimDiam"></param>
+        public BearingParametrs(double bearingWidth, double innerRimDiam, double outerRimDiam, double rimsThickness, double ballDiam)
         {
+            if (innerRimDiam > outerRimDiam || rimsThickness > (outerRimDiam-innerRimDiam)/4 
+                || rimsThickness < (outerRimDiam - innerRimDiam) / 4 - ballDiam / 2 + 0.1
+                || innerRimDiam == outerRimDiam || outerRimDiam - innerRimDiam < 5
+                || ballDiam > bearingWidth || ballDiam > (outerRimDiam - innerRimDiam) / 2 - 0.2)
+            {
+                throw new ArgumentException("Неверно заданы пропорции");
+            }
+            else
+            { 
                 BearingWidth = bearingWidth;
-                InnerRimRad = innerRimRad;
-                InnerRimWidth = innerRimWidth;
-                GutterDepth = gutterDepth;
-                BallRad = ballRad;
+                InnerRimDiam = innerRimDiam;
+                OuterRimDiam = outerRimDiam;
+                RimsThickness = rimsThickness;
+                BallDiam = ballDiam;
+
+            }
         }
     }
 }
