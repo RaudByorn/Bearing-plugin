@@ -9,33 +9,37 @@ namespace BearingPlugin
     public class BearingParametrs
     {
         /// <summary>
+        /// Форма элемента качения
+        /// </summary>
+        private RollingElementForm _rollingElementForm;
+        /// <summary>
         /// Ширина подшипник
         /// </summary>
-        public double _bearingWidth;
+        private double _bearingWidth;
         /// <summary>
         /// Диаметр внутреннего обода
         /// </summary>
-        public double _innerRimDiam;
+        private double _innerRimDiam;
         /// <summary>
         /// Диаметр внешнего обода
         /// </summary>
-        public double _outerRimDiam;
+        private double _outerRimDiam;
         /// <summary>
         /// Толщина ободов
         /// </summary>
-        public double _rimsThickness;
+        private double _rimsThickness;
         /// <summary>
         /// Диаметр шарика
         /// </summary>
-        public double _ballDiam;
+        private double _ballDiam;
 
         /// <summary>
         /// Геттер и сеттер на ирину подшипника
         /// </summary>
-        private double BearingWidth
+        public double BearingWidth
         {
             get => _bearingWidth;
-            set
+            private set
             {
                 if (value < 3 || value > 16)
                     throw new ArgumentException("Ширина подшипника не должна быть меньше 3 и превышать 16!");
@@ -47,10 +51,10 @@ namespace BearingPlugin
         /// <summary>
         /// Геттер и сеттер на радиус внутреннего обода
         /// </summary>
-        private double InnerRimDiam
+        public double InnerRimDiam
         {
             get => _innerRimDiam;
-            set
+            private set
             {
                 if (value < 3 || value > 75)
                     throw new ArgumentException("Диаметр внутреннего кольца не должен быть меньше 3 и превышать 75!");
@@ -62,10 +66,10 @@ namespace BearingPlugin
         /// <summary>
         /// Геттер и сеттер на ширину внутреннего обода
         /// </summary>
-        private double OuterRimDiam
+        public double OuterRimDiam
         {
             get => _outerRimDiam;
-            set
+            private set
             {
                 if (value < 3 || value > 105)
                     throw new ArgumentException("Диаметр внешнего кольца не должен быть меньше 3 и превышать 105!");
@@ -76,10 +80,10 @@ namespace BearingPlugin
         /// <summary>
         /// Геттер и Сеттер для толщины колец
         /// </summary>
-        private double RimsThickness
+        public double RimsThickness
         {
             get => _rimsThickness;
-            set
+            private set
             {
                 if (value < 0)
                     throw new ArgumentException("Толщина ободов не может быть отрицательной");
@@ -90,15 +94,36 @@ namespace BearingPlugin
         /// <summary>
         /// Геттер и Сеттер для диаметра шариков
         /// </summary>
-        private double BallDiam
+        public double BallDiam
         {
             get => _ballDiam;
-            set
+            private set
             {
                 if (value < 0)
-                    throw new ArgumentException("Диаметр шарика не может быть отрицательным");
+                    throw new ArgumentException("Диаметр элемента качения не может быть отрицательным");
                 else
                     _ballDiam = value;
+            }
+        }
+        /// <summary>
+        /// Геттер и Сеттер для формы элемента качения
+        /// </summary>
+        public RollingElementForm RollingElementForm
+        {
+            get => _rollingElementForm;
+            private set
+            {
+                switch (value)
+                {
+                    case RollingElementForm.Ball:
+                        _rollingElementForm = value;
+                        break;
+                    case RollingElementForm.Cylinder:
+                        _rollingElementForm = value;
+                        break;
+                    default:
+                        throw new ArgumentException("Неверная форма отверстия в крышке табуретки!");
+                }
             }
         }
 
@@ -108,7 +133,7 @@ namespace BearingPlugin
         /// <param name="bearingWidth"></param>
         /// <param name="innerRimDiam"></param>
         /// <param name="outerRimDiam"></param>
-        public BearingParametrs(double bearingWidth, double innerRimDiam, double outerRimDiam, double rimsThickness, double ballDiam)
+        public BearingParametrs(RollingElementForm rollingElementForm, double bearingWidth, double innerRimDiam, double outerRimDiam, double rimsThickness, double ballDiam)
         {
             if (innerRimDiam > outerRimDiam || rimsThickness > (outerRimDiam-innerRimDiam)/4 
                 || rimsThickness < (outerRimDiam - innerRimDiam) / 4 - ballDiam / 2 + 0.1
@@ -124,7 +149,7 @@ namespace BearingPlugin
                 OuterRimDiam = outerRimDiam;
                 RimsThickness = rimsThickness;
                 BallDiam = ballDiam;
-
+                RollingElementForm = rollingElementForm;
             }
         }
     }

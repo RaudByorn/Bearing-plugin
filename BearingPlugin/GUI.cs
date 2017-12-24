@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MaterialSkin;
-using MaterialSkin.Controls;
+using System.Diagnostics;
+using System.IO;
 
 namespace BearingPlugin
 {
@@ -27,15 +27,30 @@ namespace BearingPlugin
         {
             InitializeComponent();
         }
+
         /// <summary>
         /// Построение детали
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button1_Click(object sender, EventArgs e)
+        private void BuildBearingButton(object sender, EventArgs e)
         {
             ValidateTextFields();
+            if (_errorList.Count != 0)
+                return;
+
             _errorList.Clear();
+
+            RollingElementBall.Checked = true;
+            RollingElementForm rollingElementForm = RollingElementForm.Ball;
+            if (RollingElementBall.Checked)
+            {
+                rollingElementForm = RollingElementForm.Ball;
+            }
+            if (RollingElementCylinder.Checked)
+            {
+                rollingElementForm = RollingElementForm.Cylinder;
+            }
 
             double bearingWidth = Convert.ToDouble(bearingWidthBox.Text);
             double innerRimDiam = Convert.ToDouble(innerRimDiamBox.Text);
@@ -47,7 +62,7 @@ namespace BearingPlugin
             BearingParametrs bearing = null;
             try
             {
-                bearing = new BearingParametrs(bearingWidth, innerRimDiam, outerRimDiam, rimsThickness, ballDiam);
+                bearing = new BearingParametrs(rollingElementForm ,bearingWidth, innerRimDiam, outerRimDiam, rimsThickness, ballDiam);
             }
             catch (ArgumentException exception)
             {
@@ -62,87 +77,48 @@ namespace BearingPlugin
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button2_Click(object sender, EventArgs e)
+        private void ClosePluginButton(object sender, EventArgs e)
         {
             Close();
         }
+
         /// <summary>
         /// Тестовые параметры
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TestModParam_Click(object sender, EventArgs e)
+        private void TestDataButton(object sender, EventArgs e)
         {
             bearingWidthBox.Text = "3";
             innerRimDiamBox.Text = "3";
             outerRimDiamBox.Text = "8";
             rimsThicknessBox.Text = "0,7";
             ballDiamBox.Text = "1,6";
-            
+            RollingElementCylinder.Checked = true;
         }
+
         /// <summary>
         /// Проверка полей значений подшипника
         /// </summary>
         private void ValidateTextFields()
         {
             _errorList.Clear();
-
-            if (bearingWidthBox.TextLength == 0 ||
-                double.Parse(bearingWidthBox.Text) <= 0)
-            {
-                bearingWidthLabel.ForeColor = Color.Brown;
-
-                _errorList.Add("Не указана ширина подшипника!");
+            foreach (Label lb in Controls.OfType<Label>())
+            { 
+                foreach (TextBox tb in  Controls.OfType<TextBox>())
+                { 
+                    if (tb.TextLength == 0 ||
+                    double.Parse(tb.Text) <= 0)
+                    {
+                        lb.ForeColor = Color.Red;
+                        _errorList.Add("Данные введены не верно!");
+                    }
+                    else
+                    {
+                        lb.ForeColor = Color.Black;
+                    }
+                }
             }
-            else
-            {
-                bearingWidthLabel.ForeColor = Color.Black;
-            }
-
-            if (innerRimDiamBox.TextLength == 0 ||
-                double.Parse(innerRimDiamBox.Text) <= 0)
-            {
-                innerRimDiamLabel.ForeColor = Color.Brown;
-                _errorList.Add("Не указан диаметр внутреннего кольца!");
-            }
-            else
-            {
-                innerRimDiamLabel.ForeColor = Color.Black;
-            }
-
-            if (outerRimDiamBox.TextLength == 0 ||
-                double.Parse(outerRimDiamBox.Text) <= 0)
-            {
-                outerRimDiamLabel.ForeColor = Color.Brown;
-                _errorList.Add("Не указан диаметр внешнего кольца!");
-            }
-            else
-            {
-                outerRimDiamLabel.ForeColor = Color.Black;
-            }
-
-            if (rimsThicknessBox.TextLength == 0 ||
-                double.Parse(rimsThicknessBox.Text) <= 0)
-            {
-                rimsThicknessLabel.ForeColor = Color.Brown;
-                _errorList.Add("Не указана толщина колец!");
-            }
-            else
-            {
-                rimsThicknessLabel.ForeColor = Color.Black;
-            }
-
-            if (ballDiamBox.TextLength == 0 ||
-                double.Parse(ballDiamBox.Text) <= 0)
-            {
-                ballDiamLabel.ForeColor = Color.Brown;
-                _errorList.Add("Не указан диаметр шариков!");
-            }
-            else
-            {
-                ballDiamLabel.ForeColor = Color.Black;
-            }
-
             ShowErrors();
         }
         /// <summary>
@@ -166,17 +142,20 @@ namespace BearingPlugin
         /// <summary>
         /// Проверка введеных данных в поля на правильность
         /// </summary>
+        /// <param name="sender"></param>
         /// <param name="e"></param>
-        /// <param name="text"></param>
-        private static void ValidateTextBoxForNumeric(KeyPressEventArgs e, TextBoxBase text)
+        private void TextBoxKeyPress(object sender, KeyPressEventArgs e)
         {
-            if (char.IsDigit(e.KeyChar)) return;
+            if (char.IsDigit(e.KeyChar))
+            {
+                return;
+            }
             if (e.KeyChar == ',' || e.KeyChar == (char)Keys.Back)
             {
                 if (e.KeyChar == (char)Keys.Back)
                 {
                 }
-                else if (text.Text.Contains(","))
+                else if ((sender as TextBox).Text.Contains(","))
                 {
                     e.Handled = true;
                 }
@@ -185,51 +164,6 @@ namespace BearingPlugin
             {
                 e.Handled = true;
             }
-        }
-        /// <summary>
-        /// Обработчик события нажатия на кнопки в текстовом поле
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void bearingWidthBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidateTextBoxForNumeric(e, (TextBoxBase)sender);
-        }
-        /// <summary>
-        /// Обработчик события нажатия на кнопки в текстовом поле
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void innerRimDiamBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidateTextBoxForNumeric(e, (TextBoxBase)sender);
-        }
-        /// <summary>
-        /// Обработчик события нажатия на кнопки в текстовом поле
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void outerRimDiamBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidateTextBoxForNumeric(e, (TextBoxBase)sender);
-        }
-        /// <summary>
-        /// Обработчик события нажатия на кнопки в текстовом поле
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ballDiamBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidateTextBoxForNumeric(e, (TextBoxBase)sender);
-        }
-        /// <summary>
-        /// Обработчик события нажатия на кнопки в текстовом поле
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void rimsThicknessBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            ValidateTextBoxForNumeric(e, (TextBoxBase)sender);
         }
     }
 }

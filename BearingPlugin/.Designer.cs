@@ -41,6 +41,8 @@
             this.rimsThicknessBox = new System.Windows.Forms.TextBox();
             this.ballDiamLabel = new System.Windows.Forms.Label();
             this.rimsThicknessLabel = new System.Windows.Forms.Label();
+            this.RollingElementBall = new System.Windows.Forms.RadioButton();
+            this.RollingElementCylinder = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // startButton
@@ -51,7 +53,7 @@
             this.startButton.TabIndex = 0;
             this.startButton.Text = "Построить деталь";
             this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.button1_Click);
+            this.startButton.Click += new System.EventHandler(this.BuildBearingButton);
             // 
             // button2
             // 
@@ -61,7 +63,7 @@
             this.button2.TabIndex = 1;
             this.button2.Text = "Выход";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.ClosePluginButton);
             // 
             // bearingWidthBox
             // 
@@ -69,7 +71,7 @@
             this.bearingWidthBox.Name = "bearingWidthBox";
             this.bearingWidthBox.Size = new System.Drawing.Size(100, 20);
             this.bearingWidthBox.TabIndex = 2;
-            this.bearingWidthBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.bearingWidthBox_KeyPress);
+            this.bearingWidthBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // innerRimDiamBox
             // 
@@ -77,7 +79,7 @@
             this.innerRimDiamBox.Name = "innerRimDiamBox";
             this.innerRimDiamBox.Size = new System.Drawing.Size(100, 20);
             this.innerRimDiamBox.TabIndex = 3;
-            this.innerRimDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.innerRimDiamBox_KeyPress);
+            this.innerRimDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // outerRimDiamBox
             // 
@@ -85,7 +87,7 @@
             this.outerRimDiamBox.Name = "outerRimDiamBox";
             this.outerRimDiamBox.Size = new System.Drawing.Size(100, 20);
             this.outerRimDiamBox.TabIndex = 4;
-            this.outerRimDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.outerRimDiamBox_KeyPress);
+            this.outerRimDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // bearingWidthLabel
             // 
@@ -116,13 +118,13 @@
             // 
             // TestModParam
             // 
-            this.TestModParam.Location = new System.Drawing.Point(12, 197);
+            this.TestModParam.Location = new System.Drawing.Point(154, 197);
             this.TestModParam.Name = "TestModParam";
             this.TestModParam.Size = new System.Drawing.Size(118, 23);
             this.TestModParam.TabIndex = 12;
             this.TestModParam.Text = "Тестовые данные";
             this.TestModParam.UseVisualStyleBackColor = true;
-            this.TestModParam.Click += new System.EventHandler(this.TestModParam_Click);
+            this.TestModParam.Click += new System.EventHandler(this.TestDataButton);
             // 
             // ballDiamBox
             // 
@@ -130,7 +132,7 @@
             this.ballDiamBox.Name = "ballDiamBox";
             this.ballDiamBox.Size = new System.Drawing.Size(100, 20);
             this.ballDiamBox.TabIndex = 13;
-            this.ballDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ballDiamBox_KeyPress);
+            this.ballDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // rimsThicknessBox
             // 
@@ -138,16 +140,16 @@
             this.rimsThicknessBox.Name = "rimsThicknessBox";
             this.rimsThicknessBox.Size = new System.Drawing.Size(100, 20);
             this.rimsThicknessBox.TabIndex = 14;
-            this.rimsThicknessBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.rimsThicknessBox_KeyPress);
+            this.rimsThicknessBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // ballDiamLabel
             // 
             this.ballDiamLabel.AutoSize = true;
             this.ballDiamLabel.Location = new System.Drawing.Point(120, 97);
             this.ballDiamLabel.Name = "ballDiamLabel";
-            this.ballDiamLabel.Size = new System.Drawing.Size(94, 13);
+            this.ballDiamLabel.Size = new System.Drawing.Size(149, 13);
             this.ballDiamLabel.TabIndex = 15;
-            this.ballDiamLabel.Text = "Диаметр шарика";
+            this.ballDiamLabel.Text = "Диаметр элемента качения";
             // 
             // rimsThicknessLabel
             // 
@@ -158,11 +160,33 @@
             this.rimsThicknessLabel.TabIndex = 16;
             this.rimsThicknessLabel.Text = "Толщина ободов";
             // 
+            // RollingElementBall
+            // 
+            this.RollingElementBall.AutoSize = true;
+            this.RollingElementBall.Location = new System.Drawing.Point(12, 181);
+            this.RollingElementBall.Name = "RollingElementBall";
+            this.RollingElementBall.Size = new System.Drawing.Size(58, 17);
+            this.RollingElementBall.TabIndex = 19;
+            this.RollingElementBall.Text = "Шарик";
+            this.RollingElementBall.UseVisualStyleBackColor = true;
+            // 
+            // RollingElementCylinder
+            // 
+            this.RollingElementCylinder.AutoSize = true;
+            this.RollingElementCylinder.Location = new System.Drawing.Point(12, 204);
+            this.RollingElementCylinder.Name = "RollingElementCylinder";
+            this.RollingElementCylinder.Size = new System.Drawing.Size(69, 17);
+            this.RollingElementCylinder.TabIndex = 20;
+            this.RollingElementCylinder.Text = "Цилиндр";
+            this.RollingElementCylinder.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.RollingElementCylinder);
+            this.Controls.Add(this.RollingElementBall);
             this.Controls.Add(this.rimsThicknessLabel);
             this.Controls.Add(this.ballDiamLabel);
             this.Controls.Add(this.rimsThicknessBox);
@@ -198,6 +222,8 @@
         private System.Windows.Forms.TextBox rimsThicknessBox;
         private System.Windows.Forms.Label ballDiamLabel;
         private System.Windows.Forms.Label rimsThicknessLabel;
+        private System.Windows.Forms.RadioButton RollingElementBall;
+        private System.Windows.Forms.RadioButton RollingElementCylinder;
     }
 }
 

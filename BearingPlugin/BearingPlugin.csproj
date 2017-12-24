@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BearingParametrs.cs" />
+    <Compile Include="RollingElementForm.cs" />
     <Compile Include="Kompas3D.cs" />
     <Compile Include="GUI.cs">
       <SubType>Form</SubType>
