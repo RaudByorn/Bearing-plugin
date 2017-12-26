@@ -37,7 +37,7 @@
             this.innerRimDiamLabel = new System.Windows.Forms.Label();
             this.outerRimDiamLabel = new System.Windows.Forms.Label();
             this.TestModParam = new System.Windows.Forms.Button();
-            this.ballDiamBox = new System.Windows.Forms.TextBox();
+            this.rollingElementDiam = new System.Windows.Forms.TextBox();
             this.rimsThicknessBox = new System.Windows.Forms.TextBox();
             this.ballDiamLabel = new System.Windows.Forms.Label();
             this.rimsThicknessLabel = new System.Windows.Forms.Label();
@@ -126,13 +126,13 @@
             this.TestModParam.UseVisualStyleBackColor = true;
             this.TestModParam.Click += new System.EventHandler(this.TestDataButton);
             // 
-            // ballDiamBox
+            // rollingElementDiam
             // 
-            this.ballDiamBox.Location = new System.Drawing.Point(13, 91);
-            this.ballDiamBox.Name = "ballDiamBox";
-            this.ballDiamBox.Size = new System.Drawing.Size(100, 20);
-            this.ballDiamBox.TabIndex = 13;
-            this.ballDiamBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
+            this.rollingElementDiam.Location = new System.Drawing.Point(13, 91);
+            this.rollingElementDiam.Name = "rollingElementDiam";
+            this.rollingElementDiam.Size = new System.Drawing.Size(100, 20);
+            this.rollingElementDiam.TabIndex = 13;
+            this.rollingElementDiam.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // rimsThicknessBox
             // 
@@ -190,7 +190,7 @@
             this.Controls.Add(this.rimsThicknessLabel);
             this.Controls.Add(this.ballDiamLabel);
             this.Controls.Add(this.rimsThicknessBox);
-            this.Controls.Add(this.ballDiamBox);
+            this.Controls.Add(this.rollingElementDiam);
             this.Controls.Add(this.TestModParam);
             this.Controls.Add(this.outerRimDiamLabel);
             this.Controls.Add(this.innerRimDiamLabel);
@@ -218,7 +218,7 @@
         private System.Windows.Forms.Label innerRimDiamLabel;
         private System.Windows.Forms.Label outerRimDiamLabel;
         private System.Windows.Forms.Button TestModParam;
-        private System.Windows.Forms.TextBox ballDiamBox;
+        private System.Windows.Forms.TextBox rollingElementDiam;
         private System.Windows.Forms.TextBox rimsThicknessBox;
         private System.Windows.Forms.Label ballDiamLabel;
         private System.Windows.Forms.Label rimsThicknessLabel;

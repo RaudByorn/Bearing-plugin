@@ -84,9 +84,11 @@ namespace BearingPlugin
             //входим в режим редактирование эскиза
             ksDocument2D rimsDoc = rimsSketchDef.BeginEdit();
             DrawInnerRim(rimsDoc, bearing.BearingWidth, bearing.InnerRimDiam, bearing.OuterRimDiam,
-                bearing.RimsThickness, bearing.BallDiam, bearing.RollingElementForm);
+                bearing.RimsThickness, bearing.RollingElementDiam, bearing.RollingElementForm, 
+                bearing.BearingAxis, bearing.GutterDepth, bearing.GutterWidth);
             DrawOuterRim(rimsDoc, bearing.BearingWidth, bearing.InnerRimDiam, bearing.OuterRimDiam,
-                bearing.RimsThickness, bearing.BallDiam, bearing.RollingElementForm);
+                bearing.RimsThickness, bearing.RollingElementDiam, bearing.RollingElementForm, 
+                bearing.BearingAxis, bearing.GutterDepth, bearing.GutterWidth);
             //закончили редактировать эскиз
             rimsSketchDef.EndEdit(); 
 
@@ -98,7 +100,8 @@ namespace BearingPlugin
             ballSketch.Create();
             ksDocument2D ballDoc = ballSketchDef.BeginEdit();
             DrawBalls(ballDoc, bearing.BearingWidth, bearing.InnerRimDiam, bearing.OuterRimDiam, 
-                bearing.RimsThickness, bearing.BallDiam, bearing.RollingElementForm);
+                bearing.RimsThickness, bearing.RollingElementDiam, bearing.RollingElementForm, 
+                bearing.BearingAxis, bearing.GutterDepth, bearing.GutterWidth);
             ballSketchDef.EndEdit();
 
             
@@ -170,10 +173,9 @@ namespace BearingPlugin
         /// <param name="RimsThickness"></param>
         /// <param name="BallDiam"></param>
         private static void DrawInnerRim(ksDocument2D rimsDoc, double BearingWidth, double InnerRimDiam, 
-            double OuterRimDiam, double RimsThickness, double BallDiam, RollingElementForm rollingElementForm)
+            double OuterRimDiam, double RimsThickness, double RollingElementDiam, 
+            RollingElementForm rollingElementForm, double BearingAxis, double GutterDepth, double GutterWidth)
         {
-            double bearingCenter = (OuterRimDiam - InnerRimDiam) / 4 + InnerRimDiam / 2;
-            double gutterDepth = BallDiam / 2 - (bearingCenter - InnerRimDiam / 2 - RimsThickness);
             //ось вращения
             rimsDoc.ksLineSeg(-BearingWidth/2, 0 , BearingWidth/2 , 0 , 3);
             //основание
@@ -184,28 +186,25 @@ namespace BearingPlugin
             rimsDoc.ksLineSeg(BearingWidth / 2, InnerRimDiam / 2, BearingWidth / 2, RimsThickness + InnerRimDiam / 2, 1);
             if (rollingElementForm is RollingElementForm.Ball)
             {
-                double gutterWidth = (Math.Sqrt((BallDiam / 2) * (BallDiam / 2) - (BallDiam / 2 - gutterDepth) * (BallDiam / 2 - gutterDepth)));
                 //левая верхняя
-                rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, -gutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, -GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
                 //правая верхняя
-                rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, gutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
                 // желоб
-                rimsDoc.ksArcBy3Points(-gutterWidth, RimsThickness + InnerRimDiam / 2,
-                    0, RimsThickness + InnerRimDiam / 2 - gutterDepth, gutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksArcBy3Points(-GutterWidth, RimsThickness + InnerRimDiam / 2,
+                    0, RimsThickness + InnerRimDiam / 2 - GutterDepth, GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
             }
             else
             {
-                double gutterWidth = BearingWidth / 4;
-                rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, -gutterWidth, RimsThickness + InnerRimDiam / 2, 1);
-                rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, gutterWidth, RimsThickness + InnerRimDiam / 2, 1);
-                rimsDoc.ksLineSeg(-gutterWidth, RimsThickness + InnerRimDiam / 2, 
-                    -gutterWidth, RimsThickness + InnerRimDiam / 2 - gutterDepth, 1);
-                rimsDoc.ksLineSeg(gutterWidth, RimsThickness + InnerRimDiam / 2,
-                    gutterWidth, RimsThickness + InnerRimDiam / 2 - gutterDepth, 1);
-                rimsDoc.ksLineSeg(-gutterWidth, RimsThickness + InnerRimDiam / 2 - gutterDepth, 
-                    gutterWidth, RimsThickness + InnerRimDiam / 2 - gutterDepth, 1);
+                rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, -GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksLineSeg(-GutterWidth, RimsThickness + InnerRimDiam / 2, 
+                    -GutterWidth, RimsThickness + InnerRimDiam / 2 - GutterDepth, 1);
+                rimsDoc.ksLineSeg(GutterWidth, RimsThickness + InnerRimDiam / 2,
+                    GutterWidth, RimsThickness + InnerRimDiam / 2 - GutterDepth, 1);
+                rimsDoc.ksLineSeg(-GutterWidth, RimsThickness + InnerRimDiam / 2 - GutterDepth,
+                    GutterWidth, RimsThickness + InnerRimDiam / 2 - GutterDepth, 1);
             }
-
         }
         /// <summary>
         /// Рисуем эскиз внешнего обода
@@ -217,34 +216,29 @@ namespace BearingPlugin
         /// <param name="RimsThickness"></param>
         /// <param name="BallDiam"></param>
         private static void DrawOuterRim(ksDocument2D rimsDoc, double BearingWidth, double InnerRimDiam,
-            double OuterRimDiam, double RimsThickness, double BallDiam, RollingElementForm rollingElementForm)
+            double OuterRimDiam, double RimsThickness, double BallDiam, 
+             RollingElementForm rollingElementForm, double BearingAxis, double GutterDepth, double GutterWidth)
         {
-            double bearingCenter = (OuterRimDiam - InnerRimDiam) / 4 + InnerRimDiam / 2;
-            double gutterDepth = BallDiam / 2 - (bearingCenter - InnerRimDiam / 2 - RimsThickness);
-           
-
             rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2, BearingWidth / 2, OuterRimDiam / 2, 1);
             rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2, -BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 1);
             rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2, BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 1);
             if (rollingElementForm is RollingElementForm.Ball)
             {
-                double gutterWidth = (Math.Sqrt((BallDiam / 2) * (BallDiam / 2) - (BallDiam / 2 - gutterDepth) * (BallDiam / 2 - gutterDepth)));
-                rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, -gutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
-                rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, gutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
-                rimsDoc.ksArcBy3Points(-gutterWidth, OuterRimDiam / 2 - RimsThickness,
-                    0, OuterRimDiam / 2 - RimsThickness + gutterDepth, gutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, -GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksArcBy3Points(-GutterWidth, OuterRimDiam / 2 - RimsThickness,
+                    0, OuterRimDiam / 2 - RimsThickness + GutterDepth, GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
             }
             else
             {
-                double gutterWidth = BearingWidth / 4;
-                rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, -gutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
-                rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, gutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
-                rimsDoc.ksLineSeg(-gutterWidth, OuterRimDiam / 2 - RimsThickness,
-                    -gutterWidth, OuterRimDiam / 2 - RimsThickness + gutterDepth, 1);
-                rimsDoc.ksLineSeg(gutterWidth, OuterRimDiam / 2 - RimsThickness,
-                    gutterWidth, OuterRimDiam / 2 - RimsThickness + gutterDepth, 1);
-                rimsDoc.ksLineSeg(-gutterWidth, OuterRimDiam / 2 - RimsThickness + gutterDepth,
-                    gutterWidth, OuterRimDiam / 2 - RimsThickness + gutterDepth, 1);
+                rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, -GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksLineSeg(-GutterWidth, OuterRimDiam / 2 - RimsThickness,
+                    -GutterWidth, OuterRimDiam / 2 - RimsThickness + GutterDepth, 1);
+                rimsDoc.ksLineSeg(GutterWidth, OuterRimDiam / 2 - RimsThickness,
+                    GutterWidth, OuterRimDiam / 2 - RimsThickness + GutterDepth, 1);
+                rimsDoc.ksLineSeg(-GutterWidth, OuterRimDiam / 2 - RimsThickness + GutterDepth,
+                    GutterWidth, OuterRimDiam / 2 - RimsThickness + GutterDepth, 1);
             }
         }
             /// <summary>
@@ -257,27 +251,21 @@ namespace BearingPlugin
             /// <param name="RimsThickness"></param>
             /// <param name="BallDiam"></param>
             private static void DrawBalls(ksDocument2D ballDoc, double BearingWidth, double InnerRimDiam, 
-            double OuterRimDiam, double RimsThickness, double BallDiam, RollingElementForm rollingElementForm)
-        {
-            double bearingCenter = (OuterRimDiam - InnerRimDiam) / 4 + InnerRimDiam / 2;
-            double gutterDepth = BallDiam / 2 - (bearingCenter - InnerRimDiam / 2 - RimsThickness);
-
-
-            if (rollingElementForm is RollingElementForm.Ball)
+            double OuterRimDiam, double RimsThickness, double BallDiam, 
+             RollingElementForm rollingElementForm, double BearingAxis, double GutterDepth, double GutterWidth)
             {
-            double gutterWidth = (Math.Sqrt((BallDiam / 2) * (BallDiam / 2) - (BallDiam / 2 - gutterDepth) * (BallDiam / 2 - gutterDepth)));
-            ballDoc.ksArcByAngle(0, bearingCenter, BallDiam / 2, -90, 90, 1, 1);
-            ballDoc.ksLineSeg(0, 0, 0, 1, 3);
+                if (rollingElementForm is RollingElementForm.Ball)
+                {
+                    ballDoc.ksArcByAngle(0, BearingAxis, BallDiam / 2, -90, 90, 1, 1);
+                    ballDoc.ksLineSeg(0, 0, 0, 1, 3);
+                }
+                else
+                {
+                    ballDoc.ksLineSeg(-GutterWidth, BearingAxis, -GutterWidth, BearingAxis - BallDiam / 2, 1);
+                    ballDoc.ksLineSeg(-GutterWidth, BearingAxis - BallDiam / 2, GutterWidth, BearingAxis - BallDiam / 2, 1);
+                    ballDoc.ksLineSeg(GutterWidth, BearingAxis - BallDiam / 2, GutterWidth, BearingAxis, 1);
+                    ballDoc.ksLineSeg(-GutterWidth, BearingAxis, GutterWidth, BearingAxis, 3);
+                }
             }
-            else
-            {
-            double gutterWidth = BearingWidth / 4;
-            ballDoc.ksLineSeg(-gutterWidth, bearingCenter, -gutterWidth, bearingCenter - BallDiam / 2, 1);
-            ballDoc.ksLineSeg(-gutterWidth, bearingCenter - BallDiam / 2, gutterWidth, bearingCenter - BallDiam / 2, 1);
-            ballDoc.ksLineSeg(gutterWidth, bearingCenter - BallDiam / 2, gutterWidth, bearingCenter, 1);
-            ballDoc.ksLineSeg(-gutterWidth, bearingCenter, gutterWidth, bearingCenter, 3);
-            }
-        }
-
     }
 }

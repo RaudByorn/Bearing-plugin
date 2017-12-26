@@ -29,10 +29,33 @@ namespace BearingPlugin
         /// </summary>
         private double _rimsThickness;
         /// <summary>
-        /// Диаметр шарика
+        /// Диаметр элемента качения
         /// </summary>
-        private double _ballDiam;
-
+        private double _rollingElementDiam;
+        /// <summary>
+        /// Координаты оси подшипника
+        /// </summary>
+        private readonly double _bearingAxis;
+        /// <summary>
+        /// Глубина желоба
+        /// </summary>
+        private readonly double _gutterDepth;
+        /// <summary>
+        /// Ширина желоба
+        /// </summary>
+        private readonly double _gutterWidth;
+        /// <summary>
+        /// Геттер для координаты оси подшипника
+        /// </summary>
+        public double BearingAxis => _bearingAxis;
+        /// <summary>
+        /// Геттер для глубины желоба
+        /// </summary>
+        public double GutterDepth => _gutterDepth;
+        /// <summary>
+        /// Шеттер для ширины желоба
+        /// </summary>
+        public double GutterWidth => _gutterWidth;
         /// <summary>
         /// Геттер и сеттер на ирину подшипника
         /// </summary>
@@ -47,7 +70,6 @@ namespace BearingPlugin
                     _bearingWidth = value;
             }
         }
-
         /// <summary>
         /// Геттер и сеттер на радиус внутреннего обода
         /// </summary>
@@ -62,7 +84,6 @@ namespace BearingPlugin
                     _innerRimDiam = value;
             }
         }
-
         /// <summary>
         /// Геттер и сеттер на ширину внутреннего обода
         /// </summary>
@@ -94,15 +115,15 @@ namespace BearingPlugin
         /// <summary>
         /// Геттер и Сеттер для диаметра шариков
         /// </summary>
-        public double BallDiam
+        public double RollingElementDiam
         {
-            get => _ballDiam;
+            get => _rollingElementDiam;
             private set
             {
                 if (value < 0)
                     throw new ArgumentException("Диаметр элемента качения не может быть отрицательным");
                 else
-                    _ballDiam = value;
+                    _rollingElementDiam = value;
             }
         }
         /// <summary>
@@ -122,23 +143,24 @@ namespace BearingPlugin
                         _rollingElementForm = value;
                         break;
                     default:
-                        throw new ArgumentException("Неверная форма отверстия в крышке табуретки!");
+                        throw new ArgumentException("Неверная форма элемента качения!");
                 }
             }
         }
-
         /// <summary>
         /// Присвоение значений и проверка пропорций
         /// </summary>
         /// <param name="bearingWidth"></param>
         /// <param name="innerRimDiam"></param>
         /// <param name="outerRimDiam"></param>
-        public BearingParametrs(RollingElementForm rollingElementForm, double bearingWidth, double innerRimDiam, double outerRimDiam, double rimsThickness, double ballDiam)
+        public BearingParametrs(RollingElementForm rollingElementForm, double bearingWidth, 
+            double innerRimDiam, double outerRimDiam, double rimsThickness, 
+            double rollingElementDiam)
         {
             if (innerRimDiam > outerRimDiam || rimsThickness > (outerRimDiam-innerRimDiam)/4 
-                || rimsThickness < (outerRimDiam - innerRimDiam) / 4 - ballDiam / 2 + 0.1
+                || rimsThickness < (outerRimDiam - innerRimDiam) / 4 - rollingElementDiam / 2 + 0.1
                 || innerRimDiam == outerRimDiam || outerRimDiam - innerRimDiam < 5
-                || ballDiam > bearingWidth || ballDiam > (outerRimDiam - innerRimDiam) / 2 - 0.2)
+                || rollingElementDiam > bearingWidth || rollingElementDiam > (outerRimDiam - innerRimDiam) / 2 - 0.2)
             {
                 throw new ArgumentException("Неверно заданы пропорции");
             }
@@ -148,8 +170,18 @@ namespace BearingPlugin
                 InnerRimDiam = innerRimDiam;
                 OuterRimDiam = outerRimDiam;
                 RimsThickness = rimsThickness;
-                BallDiam = ballDiam;
+                RollingElementDiam = rollingElementDiam;
                 RollingElementForm = rollingElementForm;
+                _bearingAxis = (OuterRimDiam - InnerRimDiam) / 4 + InnerRimDiam / 2;
+                _gutterDepth = rollingElementDiam / 2 - (BearingAxis - InnerRimDiam / 2 - RimsThickness);
+                if (rollingElementForm is RollingElementForm.Ball)
+                {
+                    _gutterWidth = (Math.Sqrt((RollingElementDiam / 2) * (RollingElementDiam / 2) - (RollingElementDiam / 2 - GutterDepth) * (RollingElementDiam / 2 - GutterDepth)));
+                }
+                else
+                {
+                    _gutterWidth = BearingWidth / 4;
+                }
             }
         }
     }

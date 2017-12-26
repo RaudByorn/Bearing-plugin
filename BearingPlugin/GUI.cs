@@ -41,7 +41,6 @@ namespace BearingPlugin
 
             _errorList.Clear();
 
-            RollingElementBall.Checked = true;
             RollingElementForm rollingElementForm = RollingElementForm.Ball;
             if (RollingElementBall.Checked)
             {
@@ -56,7 +55,7 @@ namespace BearingPlugin
             double innerRimDiam = Convert.ToDouble(innerRimDiamBox.Text);
             double outerRimDiam = Convert.ToDouble(outerRimDiamBox.Text);
             double rimsThickness = Convert.ToDouble(rimsThicknessBox.Text);
-            double ballDiam = Convert.ToDouble(ballDiamBox.Text);
+            double ballDiam = Convert.ToDouble(rollingElementDiam.Text);
 
 
             BearingParametrs bearing = null;
@@ -93,7 +92,7 @@ namespace BearingPlugin
             innerRimDiamBox.Text = "3";
             outerRimDiamBox.Text = "8";
             rimsThicknessBox.Text = "0,7";
-            ballDiamBox.Text = "1,6";
+            rollingElementDiam.Text = "1,6";
             RollingElementCylinder.Checked = true;
         }
 
