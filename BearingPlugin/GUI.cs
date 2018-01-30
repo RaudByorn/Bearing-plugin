@@ -18,11 +18,15 @@ namespace BearingPlugin
         ///     Объект обертки Компас
         /// </summary>
         private Kompas3D _kompas3D = new Kompas3D();
+
         /// <summary>
         /// Список с ошибками
         /// </summary>
         private readonly List<string> _errorList = new List<string>();
 
+        /// <summary>
+        /// Конструктор класса
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
@@ -37,8 +41,9 @@ namespace BearingPlugin
         {
             ValidateTextFields();
             if (_errorList.Count != 0)
+            { 
                 return;
-
+            }
             _errorList.Clear();
 
             RollingElementForm rollingElementForm = RollingElementForm.Ball;
@@ -57,7 +62,6 @@ namespace BearingPlugin
             double rimsThickness = Convert.ToDouble(rimsThicknessBox.Text);
             double ballDiam = Convert.ToDouble(rollingElementDiam.Text);
 
-
             BearingParametrs bearing = null;
             try
             {
@@ -71,6 +75,7 @@ namespace BearingPlugin
             }
             _kompas3D.BuildBearing(bearing);
         }
+
         /// <summary>
         /// Закрыть плагин
         /// </summary>
@@ -82,44 +87,24 @@ namespace BearingPlugin
         }
 
         /// <summary>
-        /// Тестовые параметры
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void TestDataButton(object sender, EventArgs e)
-        {
-            bearingWidthBox.Text = "3";
-            innerRimDiamBox.Text = "3";
-            outerRimDiamBox.Text = "8";
-            rimsThicknessBox.Text = "0,7";
-            rollingElementDiam.Text = "1,6";
-            RollingElementCylinder.Checked = true;
-        }
-
-        /// <summary>
         /// Проверка полей значений подшипника
         /// </summary>
         private void ValidateTextFields()
         {
             _errorList.Clear();
-            foreach (Label lb in Controls.OfType<Label>())
-            { 
+            
                 foreach (TextBox tb in  Controls.OfType<TextBox>())
-                { 
+                {
                     if (tb.TextLength == 0 ||
                     double.Parse(tb.Text) <= 0)
                     {
-                        lb.ForeColor = Color.Red;
-                        _errorList.Add("Данные введены не верно!");
-                    }
-                    else
-                    {
-                        lb.ForeColor = Color.Black;
+                        _errorList.Add("Размер не может быть отрицательным или равен нулю!");
+                        break;
                     }
                 }
-            }
             ShowErrors();
         }
+
         /// <summary>
         /// Вывод ошибок
         /// </summary>
@@ -138,6 +123,7 @@ namespace BearingPlugin
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         /// <summary>
         /// Проверка введеных данных в поля на правильность
         /// </summary>

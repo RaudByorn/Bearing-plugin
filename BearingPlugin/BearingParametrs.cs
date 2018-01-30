@@ -6,56 +6,71 @@ using System.Threading.Tasks;
 
 namespace BearingPlugin
 {
+    /// <summary>
+    /// Класс для присвоения параметров и проверки на их корректность
+    /// </summary>
     public class BearingParametrs
     {
         /// <summary>
         /// Форма элемента качения
         /// </summary>
         private RollingElementForm _rollingElementForm;
+
         /// <summary>
         /// Ширина подшипник
         /// </summary>
         private double _bearingWidth;
+
         /// <summary>
         /// Диаметр внутреннего обода
         /// </summary>
         private double _innerRimDiam;
+
         /// <summary>
         /// Диаметр внешнего обода
         /// </summary>
         private double _outerRimDiam;
+
         /// <summary>
         /// Толщина ободов
         /// </summary>
         private double _rimsThickness;
+
         /// <summary>
         /// Диаметр элемента качения
         /// </summary>
         private double _rollingElementDiam;
+
         /// <summary>
         /// Координаты оси подшипника
         /// </summary>
-        private readonly double _bearingAxis;
+        private double _bearingAxis;
+
         /// <summary>
         /// Глубина желоба
         /// </summary>
-        private readonly double _gutterDepth;
+        private double _gutterDepth;
+
         /// <summary>
         /// Ширина желоба
         /// </summary>
-        private readonly double _gutterWidth;
+        private double _gutterWidth;
+
         /// <summary>
         /// Геттер для координаты оси подшипника
         /// </summary>
         public double BearingAxis => _bearingAxis;
+
         /// <summary>
         /// Геттер для глубины желоба
         /// </summary>
         public double GutterDepth => _gutterDepth;
+
         /// <summary>
         /// Шеттер для ширины желоба
         /// </summary>
         public double GutterWidth => _gutterWidth;
+
         /// <summary>
         /// Геттер и сеттер на ирину подшипника
         /// </summary>
@@ -64,12 +79,17 @@ namespace BearingPlugin
             get => _bearingWidth;
             private set
             {
-                if (value < 3 || value > 16)
+                if (value < 3 || value > 16 || double.IsNaN(value))
+                { 
                     throw new ArgumentException("Ширина подшипника не должна быть меньше 3 и превышать 16!");
+                }
                 else
+                { 
                     _bearingWidth = value;
+                }
             }
         }
+
         /// <summary>
         /// Геттер и сеттер на радиус внутреннего обода
         /// </summary>
@@ -78,12 +98,17 @@ namespace BearingPlugin
             get => _innerRimDiam;
             private set
             {
-                if (value < 3 || value > 75)
+                if (value < 3 || value > 75 || double.IsNaN(value))
+                { 
                     throw new ArgumentException("Диаметр внутреннего кольца не должен быть меньше 3 и превышать 75!");
+                }
                 else
+                { 
                     _innerRimDiam = value;
+                }
             }
         }
+
         /// <summary>
         /// Геттер и сеттер на ширину внутреннего обода
         /// </summary>
@@ -92,12 +117,17 @@ namespace BearingPlugin
             get => _outerRimDiam;
             private set
             {
-                if (value < 3 || value > 105)
+                if (value < 3 || value > 105 || double.IsNaN(value))
+                { 
                     throw new ArgumentException("Диаметр внешнего кольца не должен быть меньше 3 и превышать 105!");
+                }
                 else
+                { 
                     _outerRimDiam = value;
+                }
             }
         }
+
         /// <summary>
         /// Геттер и Сеттер для толщины колец
         /// </summary>
@@ -106,12 +136,17 @@ namespace BearingPlugin
             get => _rimsThickness;
             private set
             {
-                if (value < 0)
+                if (value < 0 || double.IsNaN(value))
+                { 
                     throw new ArgumentException("Толщина ободов не может быть отрицательной");
+                }
                 else
+                { 
                     _rimsThickness = value;
+                }
             }
         }
+
         /// <summary>
         /// Геттер и Сеттер для диаметра шариков
         /// </summary>
@@ -120,12 +155,17 @@ namespace BearingPlugin
             get => _rollingElementDiam;
             private set
             {
-                if (value < 0)
+                if (value < 0 || double.IsNaN(value))
+                {
                     throw new ArgumentException("Диаметр элемента качения не может быть отрицательным");
+                }
                 else
+                {
                     _rollingElementDiam = value;
+                }
             }
         }
+
         /// <summary>
         /// Геттер и Сеттер для формы элемента качения
         /// </summary>
@@ -147,12 +187,13 @@ namespace BearingPlugin
                 }
             }
         }
+
         /// <summary>
         /// Присвоение значений и проверка пропорций
         /// </summary>
-        /// <param name="bearingWidth"></param>
-        /// <param name="innerRimDiam"></param>
-        /// <param name="outerRimDiam"></param>
+        /// <param name="bearingWidth">Ширина подшипника</param>
+        /// <param name="innerRimDiam">Диаметр внутреннего обода</param>
+        /// <param name="outerRimDiam">Диаметр внешнего обода</param>
         public BearingParametrs(RollingElementForm rollingElementForm, double bearingWidth, 
             double innerRimDiam, double outerRimDiam, double rimsThickness, 
             double rollingElementDiam)
@@ -162,7 +203,14 @@ namespace BearingPlugin
                 || innerRimDiam == outerRimDiam || outerRimDiam - innerRimDiam < 5
                 || rollingElementDiam > bearingWidth || rollingElementDiam > (outerRimDiam - innerRimDiam) / 2 - 0.2)
             {
-                throw new ArgumentException("Неверно заданы пропорции");
+                throw new ArgumentException("Список возможных ошибок в пропорциях:\n" +
+                    "* Диаметр внутреннего обода > Диаметр внешнего обода\n" +
+                    "* Толщина ободов > (Диаметр внешнего обода - Диаметр внутреннего обода) / 4\n" + 
+                    "* Толщина ободов < (Диаметр внешнего обода - Диаметр внутреннего обода) / 4 - Диаметр элемента качения / 2 + 0.1\n" +
+                    "* Диаметр внутреннего обода = Диаметр внешнего обода\n" +
+                    "* Диаметр внешнего обода - Диаметр внутреннего обода < 5\n" +
+                    "* Диаметр элемента качения > Ширины подшипника\n" +
+                    "* Диаметр элемента качения > (Диаметр внешнего обода - Диаметр внутреннего обода) /2 - 0.2");
             }
             else
             { 

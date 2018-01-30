@@ -9,11 +9,10 @@ using Kompas6Constants3D;
 using KAPITypes;
 using KompasAPI7;
 using System.Runtime.InteropServices;
-using reference = System.Int32;
 
 namespace BearingPlugin
 {
-    class Kompas3D
+    public class Kompas3D
     {
         /// <summary>
         /// Объект компаса
@@ -21,7 +20,7 @@ namespace BearingPlugin
         private KompasObject _kompas = null;
 
         /// <summary>
-        /// Запускаем компас
+        /// Метод для запуска КОМПАС-3D
         /// </summary>
         private void StartKompas()
         {
@@ -35,12 +34,16 @@ namespace BearingPlugin
 
                 if (_kompas == null)
                 {
+                    //Возвращает тип, связанный с указанным идентификатором ProgID
                     var t = Type.GetTypeFromProgID("KOMPAS.Application.5");
                     _kompas = (KompasObject)Activator.CreateInstance(t);
 
                     StartKompas();
 
-                    if (_kompas == null) throw new Exception("Нет связи с Kompas3D.");
+                    if (_kompas == null)
+                    { 
+                        throw new Exception("Нет связи с Kompas3D.");
+                    }
                 }
             }
             catch (COMException)
@@ -51,9 +54,9 @@ namespace BearingPlugin
         }
 
         /// <summary>
-        /// строим подшипник
+        /// Метод для построения подшпника
         /// </summary>
-        /// <param name="bearing"></param>
+        /// <param name="bearing">Параметры подшипника</param>
         public void BuildBearing(BearingParametrs bearing)
         {
             StartKompas();
@@ -64,7 +67,9 @@ namespace BearingPlugin
             }
 
             if (bearing == null)
+            {
                 throw new ArgumentNullException(nameof(bearing));
+            }
 
             ksDocument3D doc = _kompas.Document3D();
             doc.Create();
@@ -103,26 +108,26 @@ namespace BearingPlugin
                 bearing.RimsThickness, bearing.RollingElementDiam, bearing.RollingElementForm, 
                 bearing.BearingAxis, bearing.GutterDepth, bearing.GutterWidth);
             ballSketchDef.EndEdit();
-
-            
+        
             ksEntity planeXOZ = ball.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOZ);
             ksEntity planeYOZ = ball.GetDefaultEntity((short)Kompas6Constants3D.Obj3dType.o3d_planeXOY);
-            
-
+ 
             BossRotatedExtrusion(rims, rimsSketch, (short)Direction_Type.dtNormal);
             BallsConcentricArray(ball, ballSketch, (short)Direction_Type.dtNormal, planeXOZ, planeYOZ);
 
             ksEntity mas = ball.NewEntity((short)Obj3dType.o3d_circularCopy);
         }
+
         /// <summary>
-        /// Создание массива шариков по концентрической сетке
+        /// Метод для создание массива шариков по концентрической сетке
         /// </summary>
-        /// <param name="part"></param>
-        /// <param name="sketch"></param>
-        /// <param name="type"></param>
-        /// <param name="planeXOZ"></param>
-        /// <param name="planeYOZ"></param>
-        private static void BallsConcentricArray(ksPart part, ksEntity sketch, short type, ksEntity planeXOZ, ksEntity planeYOZ)
+        /// <param name="part">деталь</param>
+        /// <param name="sketch">Эскиз</param>
+        /// <param name="type">направлние</param>
+        /// <param name="planeXOZ">плоскость XOZ</param>
+        /// <param name="planeYOZ">плоскость YOZ</param>
+        private static void BallsConcentricArray(ksPart part, ksEntity sketch, short type, 
+            ksEntity planeXOZ, ksEntity planeYOZ)
         {
             ksEntity rotate = part.NewEntity((short)Obj3dType.o3d_bossRotated);
             ksBossRotatedDefinition rotDef = rotate.GetDefinition();
@@ -147,12 +152,13 @@ namespace BearingPlugin
             circcoll.Add(rotate);
             circrotate.Create();
         }
+
         /// <summary>
-        /// Выдавливание вращением
+        /// Метод для выдавливание вращением в КОМПАС-3D
         /// </summary>
-        /// <param name="part"></param>
-        /// <param name="sketch"></param>
-        /// <param name="type"></param>
+        /// <param name="part">деталь</param>
+        /// <param name="sketch">эскиз</param>
+        /// <param name="type">направление</param>
         private static void BossRotatedExtrusion(ksPart part, ksEntity sketch, short type)
         {
             ksEntity bossRotated = part.NewEntity((short)Obj3dType.o3d_bossRotated);
@@ -163,15 +169,16 @@ namespace BearingPlugin
             ksRotatedParam rotateParam = bossRotatedDef.RotatedParam();
             bossRotated.Create();
         }
+
         /// <summary>
-        /// Рисуем эскиз внутреннего обода
+        /// Метод для отрисовки эскиза внутреннего обода в КОМПАС-3D
         /// </summary>
-        /// <param name="rimsDoc"></param>
-        /// <param name="BearingWidth"></param>
-        /// <param name="InnerRimDiam"></param>
-        /// <param name="OuterRimDiam"></param>
-        /// <param name="RimsThickness"></param>
-        /// <param name="BallDiam"></param>
+        /// <param name="rimsDoc">эскиз</param>
+        /// <param name="BearingWidth">Ширина подшипника</param>
+        /// <param name="InnerRimDiam">Диаметр внутреннего обода</param>
+        /// <param name="OuterRimDiam">Диаметр внешнего обода</param>
+        /// <param name="RimsThickness">Толщина подшипника</param>
+        /// <param name="BallDiam">Диаметр шарика</param>
         private static void DrawInnerRim(ksDocument2D rimsDoc, double BearingWidth, double InnerRimDiam, 
             double OuterRimDiam, double RimsThickness, double RollingElementDiam, 
             RollingElementForm rollingElementForm, double BearingAxis, double GutterDepth, double GutterWidth)
@@ -187,17 +194,21 @@ namespace BearingPlugin
             if (rollingElementForm is RollingElementForm.Ball)
             {
                 //левая верхняя
-                rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, -GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, 
+                    -GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
                 //правая верхняя
-                rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, 
+                    GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
                 // желоб
                 rimsDoc.ksArcBy3Points(-GutterWidth, RimsThickness + InnerRimDiam / 2,
                     0, RimsThickness + InnerRimDiam / 2 - GutterDepth, GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
             }
             else
             {
-                rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, -GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
-                rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksLineSeg(-BearingWidth / 2, RimsThickness + InnerRimDiam / 2, 
+                    -GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
+                rimsDoc.ksLineSeg(BearingWidth / 2, RimsThickness + InnerRimDiam / 2, 
+                    GutterWidth, RimsThickness + InnerRimDiam / 2, 1);
                 rimsDoc.ksLineSeg(-GutterWidth, RimsThickness + InnerRimDiam / 2, 
                     -GutterWidth, RimsThickness + InnerRimDiam / 2 - GutterDepth, 1);
                 rimsDoc.ksLineSeg(GutterWidth, RimsThickness + InnerRimDiam / 2,
@@ -206,15 +217,16 @@ namespace BearingPlugin
                     GutterWidth, RimsThickness + InnerRimDiam / 2 - GutterDepth, 1);
             }
         }
+
         /// <summary>
-        /// Рисуем эскиз внешнего обода
+        /// Метод для отрисовки эскиза внешнего обода в КОМПАС-3D
         /// </summary>
-        /// <param name="rimsDoc"></param>
-        /// <param name="BearingWidth"></param>
-        /// <param name="InnerRimDiam"></param>
-        /// <param name="OuterRimDiam"></param>
-        /// <param name="RimsThickness"></param>
-        /// <param name="BallDiam"></param>
+        /// <param name="rimsDoc">эскиз</param>
+        /// <param name="BearingWidth">Ширина подшипника</param>
+        /// <param name="InnerRimDiam">Диаметр внутреннего обода</param>
+        /// <param name="OuterRimDiam">Диаметр внешнего обода</param>
+        /// <param name="RimsThickness">Толщина подшипника</param>
+        /// <param name="BallDiam">Диаметр шарика</param>
         private static void DrawOuterRim(ksDocument2D rimsDoc, double BearingWidth, double InnerRimDiam,
             double OuterRimDiam, double RimsThickness, double BallDiam, 
              RollingElementForm rollingElementForm, double BearingAxis, double GutterDepth, double GutterWidth)
@@ -224,15 +236,19 @@ namespace BearingPlugin
             rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2, BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 1);
             if (rollingElementForm is RollingElementForm.Ball)
             {
-                rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, -GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
-                rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 
+                    -GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 
+                    GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
                 rimsDoc.ksArcBy3Points(-GutterWidth, OuterRimDiam / 2 - RimsThickness,
                     0, OuterRimDiam / 2 - RimsThickness + GutterDepth, GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
             }
             else
             {
-                rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, -GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
-                rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksLineSeg(-BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 
+                    -GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
+                rimsDoc.ksLineSeg(BearingWidth / 2, OuterRimDiam / 2 - RimsThickness, 
+                    GutterWidth, OuterRimDiam / 2 - RimsThickness, 1);
                 rimsDoc.ksLineSeg(-GutterWidth, OuterRimDiam / 2 - RimsThickness,
                     -GutterWidth, OuterRimDiam / 2 - RimsThickness + GutterDepth, 1);
                 rimsDoc.ksLineSeg(GutterWidth, OuterRimDiam / 2 - RimsThickness,
@@ -241,18 +257,19 @@ namespace BearingPlugin
                     GutterWidth, OuterRimDiam / 2 - RimsThickness + GutterDepth, 1);
             }
         }
-            /// <summary>
-            /// Рисуем эских шарика
-            /// </summary>
-            /// <param name="ballDoc"></param>
-            /// <param name="BearingWidth"></param>
-            /// <param name="InnerRimDiam"></param>
-            /// <param name="OuterRimDiam"></param>
-            /// <param name="RimsThickness"></param>
-            /// <param name="BallDiam"></param>
-            private static void DrawBalls(ksDocument2D ballDoc, double BearingWidth, double InnerRimDiam, 
-            double OuterRimDiam, double RimsThickness, double BallDiam, 
-             RollingElementForm rollingElementForm, double BearingAxis, double GutterDepth, double GutterWidth)
+
+        /// <summary>
+        /// Метод для отрисовки эскиза элемена качения в КОМПАС-3D
+        /// </summary>
+        /// <param name="ballDoc">эскиз</param>
+        /// <param name="BearingWidth">Ширина подшипника</param>
+        /// <param name="InnerRimDiam">Диаметр внутреннего обода</param>
+        /// <param name="OuterRimDiam">Диаметр внешнего обода</param>
+        /// <param name="RimsThickness">Толщина подшипника</param>
+        /// <param name="BallDiam">Диаметр шарика</param>
+        private static void DrawBalls(ksDocument2D ballDoc, double BearingWidth, double InnerRimDiam, 
+                double OuterRimDiam, double RimsThickness, double BallDiam, 
+                RollingElementForm rollingElementForm, double BearingAxis, double GutterDepth, double GutterWidth)
             {
                 if (rollingElementForm is RollingElementForm.Ball)
                 {
@@ -262,7 +279,8 @@ namespace BearingPlugin
                 else
                 {
                     ballDoc.ksLineSeg(-GutterWidth, BearingAxis, -GutterWidth, BearingAxis - BallDiam / 2, 1);
-                    ballDoc.ksLineSeg(-GutterWidth, BearingAxis - BallDiam / 2, GutterWidth, BearingAxis - BallDiam / 2, 1);
+                    ballDoc.ksLineSeg(-GutterWidth, BearingAxis - BallDiam / 2, GutterWidth, 
+                        BearingAxis - BallDiam / 2, 1);
                     ballDoc.ksLineSeg(GutterWidth, BearingAxis - BallDiam / 2, GutterWidth, BearingAxis, 1);
                     ballDoc.ksLineSeg(-GutterWidth, BearingAxis, GutterWidth, BearingAxis, 3);
                 }
